@@ -1,0 +1,1 @@
+export const nil = 'nil' as null;
