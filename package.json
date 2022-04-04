@@ -1,0 +1,28 @@
+{
+  "name": "sadorlang",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sadorowo/sadorlang.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sadorowo/sadorlang/issues"
+  },
+  "homepage": "https://github.com/sadorowo/sadorlang#readme",
+  "dependencies": {
+    "@types/node": "^17.0.23",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
+  }
+}
