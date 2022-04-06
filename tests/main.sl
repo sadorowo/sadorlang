@@ -1,7 +1,4 @@
-def val text = Hello, World
-def val int = 2137
-def val f = 0.0
+def val helloworld = Hello, World
 
-$Println($text)
-
+$Println(Witaj świecie! Po angielsku jest to $helloworld.)
 # poprawie potem :D

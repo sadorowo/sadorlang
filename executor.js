@@ -1,33 +1,33 @@
 const { readFileSync } = require('fs');
+const { nil } = require('./globals');
 const { join } = require('path');
 const Failure = require('./failures');
 const regexes = require('./regexes');
 
-if (typeof globalThis['__sadorlang'] === undefined)
+if (typeof __sadorlang === undefined)
 globalThis['__sadorlang'] = {}
+
+if (!process.argv[2])
+throw new Failure('CompilerFailure', `Failed to run file ${process.argv[2] || nil}`)
 
 let code = readFileSync(join('.', process.argv[2])).toString('utf-8');
 
-const variablesToReplace = code.match(regexes.USING_VARIABLE_REGEX)?.filter((match) => !regexes.FUNCTION_EXEC_REGEX.test(match));
-const variables = code.match(regexes.TYPE_VARIABLE_REGEX);
-
-for (const variable of variables) {
+for (const variable of code.match(regexes.TYPE_VARIABLE_REGEX) || []) {
     const [rawName, value] = variable.split('=');
     
     const name = rawName.trim().split(' ').pop()
-    if (globalThis['__sadorlang'][name])
+    if (__sadorlang[name])
     throw new Failure('VariableFailure', 'Variable already declared');
     
-    globalThis['__sadorlang'][name] = value.trim();
+    __sadorlang[name] = value.trim();
 }
 
-for (const variable of variablesToReplace) 
-code = code.replace(variable, globalThis['__sadorlang'][variable.slice(1)] || variable)
+for (const variable of Array.from(code.match(regexes.USING_VARIABLE_REGEX))) 
+if (typeof __sadorlang[variable.slice(1)] === "undefined") throw new Failure('VariableFailure', `Variable ${variable.slice(1)} not declared`)
+else if (typeof __sadorlang[variable.slice(1)] !== "function") code = code.replace(variable, __sadorlang[variable.slice(1)])
 
-const functions = code.match(regexes.FUNCTION_EXEC_REGEX);
+for (const fn of Array.from(code.match(regexes.FUNCTION_EXEC_REGEX) || [])) {
+    const [name, value] = fn.matchAll(/\$([a-zA-Z]+)\((.*)\)/g).next().value?.slice(1) || []
 
-for (const fn of functions) {
-    const [name, value] = fn.matchAll(/\$([a-zA-Z]+)\((.*)\)/g).next().value.slice(1)
-
-    globalThis['__sadorlang'][name](value)
+    __sadorlang[name]?.(...value.split(' ') || value)
 }

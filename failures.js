@@ -4,6 +4,7 @@ module.exports = class Failure extends Error {
     constructor(name, message) {
         super(message)
         this.name = name;
+        this.stack = '';
     }
 
     GetStack() {
