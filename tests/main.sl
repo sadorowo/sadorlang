@@ -1,4 +1,5 @@
-def val helloworld = Hello, World
+def mut val przywitanie = hej
+$Println($przywitanie)
 
-$Println(Witaj świecie! Po angielsku jest to $helloworld.)
-# poprawie potem :D
+repl przywitanie > siema hotowo
+$Println($przywitanie)
