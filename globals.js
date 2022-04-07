@@ -1,8 +1,8 @@
 module.exports.nil = 'nil';
 
-globalThis['__sadorlang'] = {}
+globalThis['__slGlobalThis'] = {}
 
-__sadorlang['Println'] = {
+__slGlobalThis['Println'] = {
     __value: function (...text) {
         console.log(...text)
     }, __ismut: false

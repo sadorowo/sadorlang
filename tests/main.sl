@@ -1,4 +1,4 @@
-def mut val przywitanie = hej
+def mut val przywitanie = hejuwa
 $Println($przywitanie)
 
 repl przywitanie > siema hotowo
