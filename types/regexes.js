@@ -6,6 +6,9 @@ const TYPE_FUNCTION_REGEX = /^def fn ([a-zA-Z].*)\(.*\) {[^]*(.*)}$/gm;
 const USING_VARIABLE_REGEX = /\$[a-zA-Z]+/g;
 const COMMENT_REGEX = /^"""(.*)"""$/g;
 
+const FUNC_DEF_START = /^def fn ([a-zA-Z].*)\(.*\) {$/g;
+const FUNC_DEF_END = /^}$/g;
+
 module.exports = {
     FUNCTION_EXEC_REGEX,
     TYPE_VARIABLE_REGEX,
@@ -13,5 +16,7 @@ module.exports = {
     REPLACING_VARIABLE_VALUE_REGEX,
     TYPE_FUNCTION_REGEX,
     USING_VARIABLE_REGEX,
-    COMMENT_REGEX
+    COMMENT_REGEX,
+    FUNC_DEF_START,
+    FUNC_DEF_END
 }

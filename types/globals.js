@@ -5,5 +5,5 @@ globalThis['__slGlobalThis'] = {}
 __slGlobalThis['Println'] = {
     __value: function (...text) {
         console.log(...text)
-    }, __ismut: false
+    }, __functionParameters: ['text'], __ismut: false
 }

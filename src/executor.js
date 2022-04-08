@@ -1,6 +1,6 @@
 const { readFileSync } = require('fs');
-const { nil } = require('../types/globals');
 const { join } = require('path');
+const { nil } = require('../types/globals');
 const Failure = require('../types/failures');
 const regexes = require('../types/regexes');
 
@@ -9,18 +9,11 @@ function main(raw_code, from_file) {
         globalThis['__slGlobalThis'] = {}
 
     if (!raw_code)
-        throw new Failure('CompilerFailure', `failed to run file ${raw_code || nil}`)
+        throw new Failure('CompilerFailure', `failed to run file ${raw_code}`)
 
     const codeLines = from_file
-        ? readFileSync(join('.', raw_code)).toString('utf-8').replace(/\r\n/g, '\n').split('\n')
-        : process.argv.slice(2).join(' ');
-
-    for (const line of codeLines) {
-        if (
-            !Object.keys(regexes).some((regexName) => RegExp(regexes[regexName]).test(line))
-            && line.length
-        ) throw new Failure('SyntaxFailure', `invalid syntax at line ${codeLines.indexOf(line) + 1}`)
-    }
+        ? readFileSync(join('.', raw_code)).toString('utf-8').replace(/\r\n/g, '\n').trim().split('\n')
+        : raw_code.split('\n').map((string) => string.split(/    /g).join(''));
 
     for (let line of codeLines) {
         if (regexes.TYPE_VARIABLE_REGEX.test(line)) {
@@ -44,11 +37,39 @@ function main(raw_code, from_file) {
             __slGlobalThis[name] = { __value: value.trim().split('\n').join(''), __ismut: true };
         } 
         
+        if (regexes.FUNC_DEF_START.test(line)) {
+            const functionDefinition = line.match(regexes.FUNC_DEF_START).shift().split(/\s{(.*)/s).shift()
+
+            const [name, parameters] = [
+                functionDefinition.split(/def fn ([a-zA-Z].*)\(.*\)/g)[1],
+                functionDefinition.split(/.*\((.*)\)/g)[1].split(' ')
+            ]
+
+            for (const parameter of parameters)
+            __slGlobalThis[parameter] = { __value: nil, __ismut: true }
+
+            let actualLineIndex = codeLines.indexOf(line) + 1
+            let functionCode = ''
+            while (!regexes.FUNC_DEF_END.test(codeLines[actualLineIndex])) {
+                functionCode += codeLines[actualLineIndex] + '\n'
+                actualLineIndex++
+            }
+
+            __slGlobalThis[name] = {
+                __value: () => main(functionCode.split(/    /g).join('\n'), false), 
+                __functionParameters: parameters,
+                __ismut: false
+            }
+        }
+
         if (regexes.REPLACING_VARIABLE_VALUE_REGEX.test(line)) {
             const [rawName, value] = line.split(/>(.*)/s);
 
             const name = rawName.trim().split(' ').pop()
             const { __value, __ismut } = __slGlobalThis[name] || {}
+
+            if (typeof __value === 'function')
+                throw new Failure('VariableFailure', 'variable is function, cannot repl');
 
             if (!__value || !__ismut)
                 throw new Failure('VariableFailure', 'variable not declared or not mutable, cannot repl');
@@ -59,11 +80,11 @@ function main(raw_code, from_file) {
         if (regexes.USING_VARIABLE_REGEX.test(line)) {
             for (const variable of line.matchAll(regexes.USING_VARIABLE_REGEX)) {
                 const name = variable.shift()
-                const { __value, __ismut } = __slGlobalThis[name.slice(1)] || {};
+                const { __value } = __slGlobalThis[name.slice(1)] || {};
 
                 if (typeof __value === "function") continue;
 
-                if (!__value || !__ismut) throw new Failure('VariableFailure', `variable ${name.slice(1)} not declared or not mutable`)
+                if (!__value) throw new Failure('VariableFailure', `variable ${name.slice(1)} not declared or not mutable`)
                 else if (typeof __value !== "function") line = line.replace(name, __value)
             }
         } 
@@ -71,7 +92,11 @@ function main(raw_code, from_file) {
         if (regexes.FUNCTION_EXEC_REGEX.test(line)) {
             const [name, value] = line.matchAll(/\$([a-zA-Z]+)\((.*)\)/g).next().value?.slice(1) || []
 
-            __slGlobalThis[name]['__value']?.(...value.split(' ') || value)
+            for (const argument of value.split(' ') || [value])
+            for (const parameter of __slGlobalThis[name]?.__functionParameters)
+            __slGlobalThis[parameter] = { __value: argument, __ismut: false }
+
+            __slGlobalThis[name]?.['__value']?.(...value.split(' ') || value)
         }
     }
 }
