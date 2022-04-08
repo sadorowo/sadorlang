@@ -1,2 +1,2 @@
 @echo off
-node executor %1
+node ./src/executor %1

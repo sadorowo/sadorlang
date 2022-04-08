@@ -1,8 +1,8 @@
 const { readFileSync } = require('fs');
-const { nil } = require('./globals');
+const { nil } = require('../types/globals');
 const { join } = require('path');
-const Failure = require('./failures');
-const regexes = require('./regexes');
+const Failure = require('../types/failures');
+const regexes = require('../types/regexes');
 
 function main(raw_code, from_file) {
     if (typeof __slGlobalThis === undefined)

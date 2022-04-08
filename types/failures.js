@@ -1,4 +1,4 @@
-const { nil } = require('./globals');
+const { nil } = require('../types/globals');
 
 module.exports = class Failure extends Error {
     constructor(name, message) {
