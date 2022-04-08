@@ -15,6 +15,13 @@ function main(raw_code, from_file) {
         ? readFileSync(join('.', raw_code)).toString('utf-8').replace(/\r\n/g, '\n').split('\n')
         : process.argv.slice(2).join(' ');
 
+    for (const line of codeLines) {
+        if (
+            !Object.keys(regexes).some((regexName) => RegExp(regexes[regexName]).test(line))
+            && line.length
+        ) throw new Failure('SyntaxFailure', `invalid syntax at line ${codeLines.indexOf(line) + 1}`)
+    }
+
     for (let line of codeLines) {
         if (regexes.TYPE_VARIABLE_REGEX.test(line)) {
             const [rawName, value] = line.split(/=(.*)/s);
@@ -66,7 +73,6 @@ function main(raw_code, from_file) {
 
             __slGlobalThis[name]['__value']?.(...value.split(' ') || value)
         }
-
     }
 }
 
