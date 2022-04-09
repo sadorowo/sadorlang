@@ -1,7 +1,7 @@
 module.exports.nil = 'nil';
 globalThis['__slGlobalThis'] = {}
 
-module.exports.Failure = class Failure extends Error {
+class Failure extends Error {
     constructor(name, message) {
         super(message.replace(/undefined|null|NaN/g, module.exports.nil))
         this.name = name;
@@ -16,6 +16,8 @@ module.exports.Failure = class Failure extends Error {
         return this.name
     }
 }
+
+module.exports.Failure = Failure;
 
 __slGlobalThis['Println'] = {
     __value: function (...text) {

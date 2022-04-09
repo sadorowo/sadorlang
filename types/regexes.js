@@ -1,5 +1,5 @@
 const FUNCTION_EXEC_REGEX = /^\$([a-zA-Z]+)\((.*)\)$/g;
-const TYPE_VARIABLE_REGEX = /^def val [a-zA-Z]+ = ([a-zA-Z0-9].*)+$/g;
+const TYPE_VARIABLE_REGEX = /^def val [a-zA-Z]+ = (.*)+$/g;
 const TYPE_FUNCTION_VARIABLE_REGEX = /^def val [a-zA-Z]+ = \$([a-zA-Z])(.*)$/g;
 const MUTABLE_FUNCTION_VARIABLE_REGEX = /^def mut val [a-zA-Z]+ = \$([a-zA-Z])(.*)$/g;
 const MUTABLE_VARIABLE_REGEX = /^def mut val [a-zA-Z]+ = (.*)+$/g;
@@ -13,6 +13,11 @@ const FUNC_DEF_END = /^}$/g;
 
 const EVERY_FUNC_DEF_START = /^every ([0-9]+) {$/g;
 const EVERY_FUNC_DEF_END = /^}$/g;
+
+const STRING_TYPE = /"([a-zA-Z0-9].*)"/g;
+const NUMBER_TYPE = /^-?\d+(\.\d+)?$/g;
+
+const PARENTHESES_CONTENT = /.*\((.*)\)/g;
 
 module.exports = {
     FUNCTION_EXEC_REGEX,
@@ -29,3 +34,5 @@ module.exports = {
     EVERY_FUNC_DEF_START,
     EVERY_FUNC_DEF_END
 }
+
+module.exports.TYPES = { STRING_TYPE, /*NUMBER_TYPE,*/ PARENTHESES_CONTENT }

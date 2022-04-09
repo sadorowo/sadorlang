@@ -1,3 +1,5 @@
-$Import(./tests/random_number_loop.sl)
+def mut val przywitanie = "siema hotowo"
 
-$Println($WitajSwiecie)
+$Println("$przywitanie")
+
+$Println("siema hotowo")

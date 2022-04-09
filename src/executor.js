@@ -31,6 +31,10 @@ function main(raw_code, from_file) {
 
             const name = rawName.trim().split(' ').pop()
             const functionName = /\$([a-zA-Z].*)+\([^)]*\)/g.exec(value)[1];
+            const parenthesesContent = regexes.TYPES.PARENTHESES_CONTENT.exec(value)[1];
+
+            if (!Object.keys(regexes.TYPES).some((o) => regexes['TYPES'][o].test(parenthesesContent)))
+            throw new Failure('VariableFailure', `invalid type in variable ${name}`);
 
             if (__slGlobalThis[name])
                 throw new Failure('VariableFailure', 'variable already declared');
@@ -40,7 +44,9 @@ function main(raw_code, from_file) {
                     __slGlobalThis[parameter] = { __value: argument, __ismut: false }
 
             const functionParameters = regexes.FUNCTION_EXEC_REGEX.exec(value
-            .split(/    /g).join('').trim())[2].split(/,\s|,/g) || []
+            .split(/    /g)
+            .join('')
+            .trim())[2].slice(1, -1).split(/,\s|,/g) || []
 
             __slGlobalThis[name] = {
                 __value: __slGlobalThis[functionName]?.['__value']?.(...functionParameters.map((p) => __slGlobalThis[p.slice(1)]?.__value || p)),
@@ -53,6 +59,10 @@ function main(raw_code, from_file) {
 
             const name = rawName.trim().split(' ').pop()
             const functionName = /\$([a-zA-Z].*)+\([^)]*\)/g.exec(value)[1];
+            const parenthesesContent = regexes.TYPES.PARENTHESES_CONTENT.exec(value)[1];
+
+            if (!Object.keys(regexes.TYPES).some((o) => regexes['TYPES'][o].test(parenthesesContent)))
+            throw new Failure('VariableFailure', `invalid type in variable ${name}`);
 
             const { __value, __ismut } = __slGlobalThis[name] || {};
 
@@ -64,14 +74,16 @@ function main(raw_code, from_file) {
                     __slGlobalThis[parameter] = { __value: argument, __ismut: false }
 
             const functionParameters = regexes.FUNCTION_EXEC_REGEX.exec(value
-            .split(/    /g).join('').trim())[2].split(/,\s|,/g) || []
+            .split(/    /g)
+            .join('')
+            .trim()).slice(1, -1)[2].split(/,\s|,/g) || []
 
             __slGlobalThis[name] = {
                 __value: __slGlobalThis[functionName]?.['__value']?.(...functionParameters.map((p) => __slGlobalThis[p.slice(1)]?.__value || p)),
                 __ismut: true
             };
         }
-
+    
         if (regexes.TYPE_VARIABLE_REGEX.test(line) && !regexes.TYPE_FUNCTION_VARIABLE_REGEX.test(line)) {
             const [rawName, value] = line.split(/=(.*)/s);
 
@@ -79,7 +91,7 @@ function main(raw_code, from_file) {
             if (__slGlobalThis[name])
                 throw new Failure('VariableFailure', 'variable already declared');
 
-            __slGlobalThis[name] = { __value: value.trim(), __ismut: false };
+            __slGlobalThis[name] = { __value: value.trim().slice(1, -1), __ismut: false };
         }
 
         if (regexes.MUTABLE_VARIABLE_REGEX.test(line) && !regexes.MUTABLE_FUNCTION_VARIABLE_REGEX.test(line)) {
@@ -94,7 +106,7 @@ function main(raw_code, from_file) {
             __slGlobalThis[name] = { 
                 __value: regexes.MUTABLE_FUNCTION_VARIABLE_REGEX.test(line)
                 ? __value
-                : value.trim(), 
+                : value.trim().slice(1, -1), 
                 __ismut: true 
             };
         }
@@ -137,7 +149,11 @@ function main(raw_code, from_file) {
             if (!__value || !__ismut)
                 throw new Failure('VariableFailure', 'variable not declared or not mutable, cannot repl');
 
-            __slGlobalThis[name] = { __value: value.trim().split('\n').join(''), __ismut: true };
+            __slGlobalThis[name] = { __value: value
+                .trim()
+                .split('\n')
+                .join('')
+                .slice(1, -1), __ismut: true };
         }
 
         if (regexes.USING_VARIABLE_REGEX.test(line)) {
@@ -180,11 +196,17 @@ function main(raw_code, from_file) {
         if (regexes.FUNCTION_EXEC_REGEX.test(line)) {
             const [name, value] = line.matchAll(/\$([a-zA-Z]+)\((.*)\)/g).next().value?.slice(1) || []
 
+            if (value && !Object.values(regexes.TYPES).some((regex) => value.match(regex))) 
+            throw new Failure('VariableFailure', `invalid type in variable ${name}`);
+
             for (const argument of value.split(' ') || [value])
                 for (const parameter of __slGlobalThis[name]?.__functionParameters || [])
                     __slGlobalThis[parameter] = { __value: argument, __ismut: false }
 
-            __slGlobalThis[name]?.['__value']?.(...value.split(' ').map((p) => __slGlobalThis[p.slice(1)]?.__value || p) || value)
+            __slGlobalThis[name]?.['__value']?.(...value
+            .slice(1, -1)
+            .split(' ')
+            .map((p) => __slGlobalThis[p.slice(1)]?.__value || p) || value)
         }
     }
 }
