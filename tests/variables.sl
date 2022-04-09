@@ -4,10 +4,13 @@ $Println($przywitanie)
 """ to jest przykladowy komentarz """
 
 def fn HelloWorld(var) {
-    $Println(hello world $var)
-    $Println(FUNKCJE DZIALAJA)
-    $Println(hello wolrd)
+    def val hotowa = $Capital($var)
+    $Println(Witaj swiecie! Siema $hotowa!)
 }
 
 repl przywitanie > siema hotowo
-$HelloWorld(123)
+$HelloWorld($przywitanie)
+
+def val sum = $Sum(1, 2, 3)
+
+$Println($sum)

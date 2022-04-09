@@ -1,7 +1,6 @@
+const { Failure, nil } = require('../types/globals');
 const { readFileSync } = require('fs');
 const { join } = require('path');
-const { nil } = require('../types/globals');
-const Failure = require('../types/failures');
 const regexes = require('../types/regexes');
 
 function main(raw_code, from_file) {
@@ -11,12 +10,50 @@ function main(raw_code, from_file) {
     if (!raw_code)
         throw new Failure('CompilerFailure', `failed to run file ${raw_code}`)
 
-    const codeLines = from_file
+    const codeLines = (from_file
         ? readFileSync(join('.', raw_code)).toString('utf-8').replace(/\r\n/g, '\n').trim().split('\n')
-        : raw_code.split('\n').map((string) => string.split(/    /g).join(''));
+        : raw_code.split('\n').map((string) => string.split(/    /g).join('')));
 
     for (let line of codeLines) {
-        if (regexes.TYPE_VARIABLE_REGEX.test(line)) {
+        if (regexes.TYPE_FUNCTION_VARIABLE_REGEX.test(line)) {
+            const [rawName, value] = line.split(/=(.*)/s);
+
+            const name = rawName.trim().split(' ').pop()
+            const functionName = /\$([a-zA-Z].*)+\([^)]*\)/g.exec(value)[1];
+
+            if (__slGlobalThis[name])
+                throw new Failure('VariableFailure', 'variable already declared');
+
+            for (const argument of value.split(' ') || [value])
+            for (const parameter of __slGlobalThis[functionName]?.__functionParameters)
+            __slGlobalThis[parameter] = { __value: argument, __ismut: false }
+
+            const functionParameters = regexes.FUNCTION_EXEC_REGEX.exec(value.trim())[2].split(/,\s|,/g) || []
+            __slGlobalThis[name] = { 
+                __value: __slGlobalThis[functionName]?.['__value']?.(...functionParameters.map((p) => __slGlobalThis[p.slice(1)]?.__value || p)), 
+                __ismut: false 
+            };
+        } 
+
+        if (regexes.MUTABLE_FUNCTION_VARIABLE_REGEX.test(line)) {
+            const [rawName, value] = line.split(/=(.*)/s);
+
+            const name = rawName.trim().split(' ').pop()
+            if (__slGlobalThis[name])
+                throw new Failure('VariableFailure', 'variable already declared');
+
+            for (const argument of value.split(' ') || [value])
+            for (const parameter of __slGlobalThis[name]?.__functionParameters)
+            __slGlobalThis[parameter] = { __value: argument, __ismut: false }
+
+            const functionParameters = regexes.FUNCTION_EXEC_REGEX.exec(value.trim())[2].split(/,\s|,/g) || []
+            __slGlobalThis[name] = { 
+                __value: __slGlobalThis[functionName]?.['__value']?.(...functionParameters.map((p) => __slGlobalThis[p.slice(1)]?.__value || p)), 
+                __ismut: true 
+            };
+        } 
+
+        if (regexes.TYPE_VARIABLE_REGEX.test(line) && !regexes.TYPE_FUNCTION_VARIABLE_REGEX.test(line)) {
             const [rawName, value] = line.split(/=(.*)/s);
 
             const name = rawName.trim().split(' ').pop()
@@ -26,7 +63,7 @@ function main(raw_code, from_file) {
             __slGlobalThis[name] = { __value: value.trim(), __ismut: false };
         } 
         
-        if (regexes.MUTABLE_VARIABLE_REGEX.test(line)) {
+        if (regexes.MUTABLE_VARIABLE_REGEX.test(line) && !regexes.MUTABLE_FUNCTION_VARIABLE_REGEX.test(line)) {
             const [rawName, value] = line.split(/=(.*)/s);
 
             const name = rawName.trim().split(' ').pop()
@@ -34,9 +71,9 @@ function main(raw_code, from_file) {
             if (__slGlobalThis[name])
                 throw new Failure('VariableFailure', 'variable already declared');
 
-            __slGlobalThis[name] = { __value: value.trim().split('\n').join(''), __ismut: true };
+            __slGlobalThis[name] = { __value: value.trim(), __ismut: true };
         } 
-        
+
         if (regexes.FUNC_DEF_START.test(line)) {
             const functionDefinition = line.match(regexes.FUNC_DEF_START).shift().split(/\s{(.*)/s).shift()
 
