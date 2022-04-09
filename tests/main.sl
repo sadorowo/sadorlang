@@ -1,1 +1,0 @@
-def val hello = world

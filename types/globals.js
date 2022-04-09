@@ -35,3 +35,11 @@ __slGlobalThis['Capital'] = {
         return text.charAt(0).toUpperCase() + text.slice(1)
     }, __functionParameters: ['text'], __ismut: false
 }
+
+__slGlobalThis['Randint'] = {
+    __value: function (min, max) {
+        if (isNaN(min) || isNaN(max)) throw new Failure('ConverterFailure', 'cannot convert string to integer')
+
+        return Math.floor(Math.random() * (max - min) + min)
+    }, __functionParameters: ['min', 'max'], __ismut: false
+}

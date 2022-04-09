@@ -1,3 +1,3 @@
-$Import(./tests/main.sl)
+$Import(./tests/random_number_loop.sl)
 
-$Println($hello)
+$Println($WitajSwiecie)
