@@ -122,10 +122,15 @@ function main(raw_code, from_file) {
             if (__slGlobalThis[name])
                 throw new Failure('VariableFailure', 'variable already declared');
 
+            const formattedValue = regexes.MUTABLE_FUNCTION_VARIABLE_REGEX.test(line)
+            ? __slGlobalThis[name]
+            : value.trim().match(regexes.TYPES.LIST_TYPE)
+                ? value.trim().slice(1, -1).match(/\"([a-zA-Z0-9]+)\"/g).map((s) => s.slice(1, -1))
+                : value.trim().slice(1, -1)
+
             __slGlobalThis[name] = {
-                __value: regexes.TYPES.LIST_TYPE.test(value.trim())
-                    ? value.trim().slice(1, -1).match(/\"([a-zA-Z0-9]+)\"/g).map((s) => s.slice(1, -1))
-                    : value.trim().slice(1, -1), __ismut: false
+                __value: formattedValue,
+                __ismut: false
             };
         }
 

@@ -21,7 +21,8 @@ module.exports.Failure = Failure;
 
 __slGlobalThis['Println'] = {
     __value: function (...text) {
-        console.log(...text)
+        const formattedText = text.join(' ')
+        console.log(formattedText.split(/\\n/g).join('\n'))
     }, __functionParameters: ['text'], __ismut: false
 }
 
@@ -36,6 +37,18 @@ __slGlobalThis['Capital'] = {
     __value: function (text) {
         return text.charAt(0).toUpperCase() + text.slice(1)
     }, __functionParameters: ['text'], __ismut: false
+}
+
+__slGlobalThis['Lower'] = {
+    __value: function (text) {
+        return text.toLowerCase()
+    }, __functionParameters: ['text'], __ismut: false
+}
+
+__slGlobalThis['Split'] = {
+    __value: function (text, char) {
+        return text.split(char)
+    }, __functionParameters: ['text', 'char'], __ismut: false
 }
 
 __slGlobalThis['Randint'] = {
