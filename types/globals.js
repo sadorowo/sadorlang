@@ -42,6 +42,23 @@ __slGlobalThis['Randint'] = {
     __value: function (min, max) {
         if (isNaN(min) || isNaN(max)) throw new Failure('ConverterFailure', 'cannot convert string to integer')
 
-        return Math.floor(Math.random() * (max - min) + min)
+        return Math.floor(Math.random() * (Number(max) - Number(min)) + Number(min))
     }, __functionParameters: ['min', 'max'], __ismut: false
+}
+
+__slGlobalThis['IndexOf'] = {
+    __value: function (array, key) {
+        if (!Array.isArray(array)) throw new Failure('TypeFailure', 'array argument must be a list');
+        if (array.indexOf(key) === -1) throw new Failure('KeyFailure', `key ${key} not found in ${JSON.stringify(array)}`);
+
+        return array.indexOf(key)
+    }, __functionParameters: ['array', 'key'], __ismut: false
+}
+
+__slGlobalThis['ItemAt'] = {
+    __value: function (array, index) {
+        if (!Array.isArray(array)) throw new Failure('TypeFailure', 'array argument must be a list');
+
+        return array[index]
+    }, __functionParameters: ['array', 'index'], __ismut: false
 }
