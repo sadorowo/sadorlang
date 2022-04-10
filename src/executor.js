@@ -22,7 +22,7 @@ function main(raw_code, from_file) {
     }
 
     const codeLines = (from_file
-        ? readFileSync(join('.', raw_code)).toString('utf-8').replace(/\r\n/g, '\n').trim().split('\n')
+        ? readFileSync(join('.', raw_code)).toString('utf-8').replace(/\r\n/g, '\n\n').trim().split('\n')
         : raw_code.split('\n'));
 
     for (let line of codeLines) {

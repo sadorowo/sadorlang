@@ -1,5 +1,3 @@
-def mut val przywitanie = "siema hotowo"
-
-$Println("$przywitanie")
-
-$Println("siema hotowo")
+def fn Policz() {
+    $Println()
+}
