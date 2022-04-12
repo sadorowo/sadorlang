@@ -2,7 +2,7 @@ include "help"
 
 # hello
 
-# val test = "123"
+val test = "123"
 # val mut test2 = "456"
 
 # repl test to "test2"

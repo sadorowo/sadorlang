@@ -24,4 +24,10 @@ function removeIndents(line) {
     return line.split(/^\s+/g).join('')
 }
 
-module.exports = { is_module, wait, print_progress, removeIndents }
+function typeConvert(raw) {
+    if (/"(.*)"/g.test(raw)) return raw.slice(1, -1)
+    else if (/[0-9]/g.test(raw)) return Number(raw)
+    else if (/([^.",]+)/g.test(raw)) return raw.match(/([^.",]+)/g).slice(1, -1).filter((v) => v.trim());
+}
+
+module.exports = { is_module, wait, print_progress, removeIndents, typeConvert }
