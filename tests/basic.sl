@@ -1,10 +1,7 @@
 include "help"
 
 # hello
+# to jest komentarz
 
-val test = "123"
-# val mut test2 = "456"
-
-# repl test to "test2"
-
-# Console:PrintLn("hello world")
+val mut test = "12333"
+val testline = Console:Println("123", "456", "456", test)
