@@ -4,4 +4,5 @@ include "help"
 # to jest komentarz
 
 val mut test = "12333"
-val testline = Console:Println("123", "456", "456", test)
+
+Console:Println("123", "456", "456", test)

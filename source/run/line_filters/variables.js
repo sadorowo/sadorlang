@@ -20,10 +20,10 @@ module.exports = function (line) {
         throw new Failure({ name: 'MismatchFailure', message: 'cannot convert immutable variable to mutable' })
 
         memory[Name] = { value: Helpers.typeConvert(TypeValue), mutable: true };
-    } else if (/^val ([a-zA-Z0-9\/\\.]+) = \$([a-zA-Z0-9]+)(.*)$/g.test(line)) {
-        const [, Name, RawValue] = line.matchAll(/^val ([a-zA-Z0-9\/\\.]+) = \$([a-zA-Z0-9]+)(.*)$/g.test(line)).next()?.value
-        
-        // if (!Helpers.is_module(Path)) 
-        // throw new Failure({ name: 'ModuleFailure', message: `module ${Path} not found, build using sl crmod [name]` })
+    } else if (/([a-zA-Z]+):?([a-zA-Z]+)\((.*)\)/g.test(line)) {
+        const Raw = line.matchAll(/(([a-zA-Z]+:)?([a-zA-Z]+))\((.*)\)/g).next()?.value;
+        const [FunctionName, FunctionArguments] = [Raw[1].split(':') || Raw[1], Raw[4]?.split(/,\s|,/g)?.map(Helpers.typeConvert) || []];
+
+        Helpers.typeConvert(line)
     }
 }
