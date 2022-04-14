@@ -1,9 +1,8 @@
-const { Failure, nil, Object } = require('../../util/globals');
+const { Failure, nil } = require('../../util/globals');
 const { code, memory, run } = require('..');
-const Regex = require('../../util/regex_types');
 const Helpers = require('../../util/helpers');
 
-const check = module.exports = function (line) {
+module.exports = function (line) {
     if (Helpers.removeIndents(line).startsWith('#')) return true;
     
     if (/^method ([a-zA-Z]+)\(.*\) {$/g.test(line)) {
@@ -34,9 +33,6 @@ const check = module.exports = function (line) {
         const object = {};
 
         while (!/^}$/g.test(code[actualLineIndex])) {
-            if (code[actualLineIndex] && Helpers.removeIndents(code[actualLineIndex]) === code[actualLineIndex])
-            throw new Failure({ name: 'TypeFailure', message: `no indent detected at line ${actualLineIndex / 2 + 1}` })
-
             if (/^method ([a-zA-Z]+)\(\) {$/g.test(Helpers.removeIndents(code[actualLineIndex])))
             { 
                 const [, Name] = /^method ([a-zA-Z]+)\(\) {$/g.exec(Helpers.removeIndents(code[actualLineIndex]));

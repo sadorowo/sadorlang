@@ -1,5 +1,3 @@
-include "help"
-
 # hello
 # to jest komentarz
 
