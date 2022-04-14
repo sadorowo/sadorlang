@@ -12,6 +12,7 @@ module.exports = function (line) {
         if (typeof memory[Name] !== "undefined" && memory[Name]?.['mutable']) 
         throw new Failure({ name: 'MismatchFailure', message: 'cannot convert mutable variable to immutable' })
 
+        //FIXME:
         memory[Name] = { value: Helpers.typeConvert(TypeValue), mutable: false };
     } else if (/^val mut ([a-zA-Z0-9\/\\.]+) = ([a-zA-Z0-9]+)?(.*)$/g.test(line)) {
         const [, Name, TypeValue] = line.matchAll(/^val mut ([a-zA-Z0-9\/\\.]+) = (([a-zA-Z0-9]+)?(.*))$/g).next()?.value

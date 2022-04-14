@@ -18,3 +18,5 @@ throw new Failure({ name: 'ArgumentFailure', message: 'file not found' })
 
 const code = module.exports.code = readFileSync(join(process.argv[3])).toString('utf-8').trim().replace(/\r\n/g, '\n\n').split('\n');
 run(code)
+
+// console.log(memory)

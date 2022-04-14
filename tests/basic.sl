@@ -11,4 +11,15 @@ method sador(sadorowo, abcd) {
     Console:Println(sadorowo, abcd)
 }
 
-sador()
+object Sador {
+    field hello
+    field name
+    field abc
+
+    method New(sador) {
+        Console:Println("hello world", sador)
+    }
+}
+
+val sadores = Sador("1", "2", "3")
+sadores:New("sador is here")

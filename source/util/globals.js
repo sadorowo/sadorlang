@@ -8,4 +8,11 @@ class Failure extends Error {
     }
 }
 
+class _Object {
+    constructor(...fields) {
+        this.fields = fields;
+    }
+}
+
 module.exports.Failure = Failure;
+module.exports.Object = _Object;
