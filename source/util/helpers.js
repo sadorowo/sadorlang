@@ -26,15 +26,9 @@ function removeIndents(line) {
     return line.split(/^\s+/g).join('')
 }
 
-memory['Console'] = {
-    'Println': {
-        value: function (...text) {
-            console.log(...text)
-        },
-        arguments: ['text']
-    }
-}
 function typeConvert(raw) {
+    if (/^method ([a-zA-Z].*)\(.*\) {$/g.test(raw)) return;
+
     if (/\{([^.]+)\}/g.test(raw)) {
         const convertedValue = raw
         .match(/\{([^.]+)\}/g)
@@ -50,9 +44,11 @@ function typeConvert(raw) {
 
     else if (/([a-zA-Z]+):?([a-zA-Z]+)\((.*)\)/g.test(raw)) {
         const Raw = raw.matchAll(/(([a-zA-Z]+:)?([a-zA-Z]+))\((.*)\)/g).next()?.value;
+        
+        if (removeIndents(raw) !== raw) return;
         const [FunctionName, FunctionArguments] = [Raw[1].split(':') || Raw[1], Raw[4]?.split(/,\s|,/g)?.map(typeConvert) || []]
 
-        if (Array.isArray(FunctionName)) {
+        if (FunctionName.length === 2) {
             if (typeof memory[FunctionName[0]] !== "object")
             throw new Failure({ name: 'TypeFailure', message: `expected class, found ${typeof memory[FunctionName[0]]}` })
 
@@ -61,11 +57,22 @@ function typeConvert(raw) {
 
             const { value, arguments } = memory[FunctionName[0]]?.[FunctionName[1]];
 
-            for (const argument of arguments) memory[argument] = nil;
+            for (const argument of arguments)
+            {
+                const [providedArgument, funcArgument] = [FunctionArguments[arguments.indexOf(argument)], argument];
+                memory[funcArgument] = { value: providedArgument || nil, mutable: true };
+            }
+
             value(...FunctionArguments)
         } else {
             const { value, arguments } = memory[FunctionName[0]];
-            for (const argument of arguments) memory[argument] = nil;
+
+            for (const argument of arguments)
+            {
+                const [providedArgument, funcArgument] = [FunctionArguments[arguments.indexOf(argument)], argument];
+                memory[funcArgument] = { value: providedArgument || nil, mutable: true };
+            }
+
             value(...FunctionArguments)
         }
     }
@@ -73,8 +80,7 @@ function typeConvert(raw) {
     else if (/"(.*)"/g.test(raw)) return raw.slice(1, -1);
     else if (/[0-9]/g.test(raw)) return Number(raw);
     else if (typeof memory[raw] !== "undefined") return memory[raw]?.value;
-
-    else throw new Failure({ name: 'TypeFailure', message: 'found variable with unknown type' })
+    else if (raw) throw new Failure({ name: 'TypeFailure', message: 'found variable/line with unknown type' })
 }
 
 module.exports = { is_module, wait, print_progress, removeIndents, typeConvert }

@@ -20,10 +20,6 @@ module.exports = function (line) {
         throw new Failure({ name: 'MismatchFailure', message: 'cannot convert immutable variable to mutable' })
 
         memory[Name] = { value: Helpers.typeConvert(TypeValue), mutable: true };
-    } else if (/([a-zA-Z]+):?([a-zA-Z]+)\((.*)\)/g.test(line)) {
-        const Raw = line.matchAll(/(([a-zA-Z]+:)?([a-zA-Z]+))\((.*)\)/g).next()?.value;
-        const [FunctionName, FunctionArguments] = [Raw[1].split(':') || Raw[1], Raw[4]?.split(/,\s|,/g)?.map(Helpers.typeConvert) || []];
-
-        Helpers.typeConvert(line)
-    }
+    } else if (/([a-zA-Z]+):?([a-zA-Z]+)\((.*)\)/g.test(line)) 
+    Helpers.typeConvert(line)
 }

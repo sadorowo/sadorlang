@@ -1,7 +1,9 @@
 const { Failure } = require('../../util/globals');
+const { memory } = require('..');
 const Regex = require('../../util/regex_types');
 const Helpers = require('../../util/helpers');
 
+require('../../util/global_variables');
 module.exports = function (line) {
     if (Helpers.removeIndents(line).startsWith('#')) return;
     
