@@ -7,7 +7,7 @@ val mut test = "12333"
 
 Console:Println("123", "456", "456", test)
 
-method sador(sadorowo, abcd) {
+method sadorek(sadorowo, abcd) {
     Console:Println(sadorowo, abcd)
 }
 
@@ -16,10 +16,10 @@ object Sador {
     field name
     field abc
 
-    method New(sador) {
-        Console:Println("hello world", sador)
+    method New() {
+        Console:Println("hello world")
     }
 }
 
 val sadores = Sador("1", "2", "3")
-sadores:New("sador is here")
+sadores:New()

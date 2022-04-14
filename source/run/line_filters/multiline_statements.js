@@ -37,15 +37,15 @@ const check = module.exports = function (line) {
             if (code[actualLineIndex] && Helpers.removeIndents(code[actualLineIndex]) === code[actualLineIndex])
             throw new Failure({ name: 'TypeFailure', message: `no indent detected at line ${actualLineIndex / 2 + 1}` })
 
-            if (/^method ([a-zA-Z]+)\(.*\) {$/g.test(Helpers.removeIndents(code[actualLineIndex])))
+            if (/^method ([a-zA-Z]+)\(\) {$/g.test(Helpers.removeIndents(code[actualLineIndex])))
             { 
-                const [, Name, Arguments] = /^method ([a-zA-Z]+)\((.*)\) {$/g.exec(Helpers.removeIndents(code[actualLineIndex]));
+                const [, Name] = /^method ([a-zA-Z]+)\(\) {$/g.exec(Helpers.removeIndents(code[actualLineIndex]));
 
                 object[Name] = { 
                     value: () => run(to_method(code, line, false).trim()
                     .replace(/\r\n/g, '\n\n')
                     .split('\n')),
-                    arguments: Arguments.split(/,\s|,/g),
+                    arguments: [],
                     mutable: false 
                 }; 
                 actualLineIndex++ 

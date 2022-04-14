@@ -26,11 +26,10 @@ function removeIndents(line) {
     return line.split(/^\s+/g).join('')
 }
 
-function typeConvert(raw) {
-    if (typeof memory[raw] !== "undefined") return memory[raw]?.value;
-    if (/^method ([a-zA-Z]+)\(.*\) {$/g.test(raw)) return;
-
-    if (/\{([^.]+)\}/g.test(raw)) {
+function typeConvert(raw, convertVariables = true) {
+    if (/^method ([a-zA-Z]+)\((.*)?\) {$/g.test(removeIndents(raw))) return;
+    
+    else if (/\{([^.]+)\}/g.test(raw)) {
         const convertedValue = raw
             .match(/\{([^.]+)\}/g)
             .shift()
@@ -47,7 +46,7 @@ function typeConvert(raw) {
         const Raw = raw.matchAll(/(([a-zA-Z]+:)?([a-zA-Z]+))\((.*)\)/g).next()?.value;
 
         if (removeIndents(raw) !== raw) return;
-        const [FunctionName, FunctionArguments] = [Raw[1].split(':') || Raw[1], Raw[4]?.split(/,\s|,/g)
+        let [FunctionName, FunctionArguments] = [Raw[1].split(':') || Raw[1], Raw[4]?.split(/,\s|,/g)
             ?.map(typeConvert) || []]
 
         if (FunctionName.length === 2) {
@@ -57,12 +56,7 @@ function typeConvert(raw) {
             if (typeof memory[FunctionName[0]]?.value?.[FunctionName[1]] !== "object")
                 throw new Failure({ name: 'MethodFailure', message: `method ${FunctionName[1]} not found in this class` })
 
-            const { value, arguments = [] } = memory[FunctionName[0]]?.value?.[FunctionName[1]];
-
-            for (const argument of global.Object.keys(memory[FunctionName[0]]?.value).filter((val) => typeof val === 'string')) {
-                const [providedArgument, funcArgument] = [FunctionArguments[arguments.indexOf(argument)], argument];
-                memory[funcArgument] = { value: providedArgument, mutable: true };
-            }
+            const { value } = memory[FunctionName[0]]?.value?.[FunctionName[1]];
 
             value(...FunctionArguments)
         } else {
@@ -72,10 +66,7 @@ function typeConvert(raw) {
 
                 for (const field of global.Object.keys(value)) {
                     object[field] = FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field];
-                    memory[field] = {
-                        value: FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field],
-                        mutable: false
-                    }
+                    memory[field] = { value: FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field], mutable: true }
                 }
 
                 return object;
@@ -98,7 +89,9 @@ function typeConvert(raw) {
 
     else if (/"(.*)"/g.test(raw)) return raw.slice(1, -1);
     else if (/[0-9]/g.test(raw)) return Number(raw);
-    else if (raw) throw new Failure({ name: 'TypeFailure', message: 'found variable/line with unknown type' })
+    else if (typeof memory[raw] !== "undefined" && convertVariables) return memory[raw]?.value;
+    else if (raw && convertVariables) throw new Failure({ name: 'TypeFailure', message: `found variable/line with unknown type ${raw}` });
+    else return raw;
 }
 
 module.exports = { is_module, wait, print_progress, removeIndents, typeConvert }
