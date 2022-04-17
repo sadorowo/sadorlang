@@ -1,2 +1,2 @@
 @echo off
-node ./src/executor %1
+node ./source/menu.js %*
