@@ -5,19 +5,21 @@ val mut test = "12333"
 
 Console:Println("123", "456", "456", test)
 
-method sadorek(sadorowo, abcd) {
-    Console:Println(sadorowo, abcd)
+method sadorek(s, abcd, abc, def) {
+    Console:Println(s, abcd, abc, def)
 }
 
-object Sador {
-    field hello
-    field name
-    field abc
+object Man {
+	field name
+	field age
+	field wife
 
-    method New() {
-        Console:Println("hello world")
-    }
+	method Info() {
+		Console:Println(name, " is ", age, " years old and his wife's name is ", wife, ".")
+	}
 }
 
-val sadores = Sador("1", "2", "3")
-sadores:New()
+val sador = Man("Sador", "15", "none")
+sador:Info()
+
+sadorek("1", "2", "3", "4")

@@ -4,7 +4,7 @@ memory['Console'] = {
     value: {
         'Println': {
             value: function (...text) {
-                console.log(...text)
+                console.log(text.join(''))
             },
             arguments: ['text']
         }
