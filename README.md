@@ -80,5 +80,6 @@ thatGirl:Info() // ThatOneGirl is ??? years old and her husband's name is sador 
 - Support for object method arguments
 - Modules/imports
 - Changing variable value
+- Function returns
 ---
 ### This is the end!
