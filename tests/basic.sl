@@ -1,25 +1,36 @@
-# hello
 # to jest komentarz
+# druga linia komentarza
 
-val mut test = "12333"
+object Boy {
+    field name
+    field age
+    field girlfriend
 
-Console:Println("123", "456", "456", test)
-
-method sadorek(s, abcd, abc, def) {
-    Console:Println(s, abcd, abc, def)
+    method DisplayInfo() {
+        Console:Println("Informacje o chłopaku o imieniu ", name, ":")
+        Console:Println("Imię: ", name)
+        Console:Println("Wiek: ", age)
+        Console:Println("Imię dziewczyny: ", girlfriend)
+    }
 }
 
-object Man {
-	field name
-	field age
-	field wife
+object Girl {
+    field name
+    field age
+    field boyfriend
 
-	method Info() {
-		Console:Println(name, " is ", age, " years old and his wife's name is ", wife, ".")
-	}
+    method DisplayInfo() {
+        Console:Println("Informacje o dziewczynie :3 o imieniu ", name, ":")
+        Console:Println("Imię: ", name)
+        Console:Println("Wiek: ", age)
+        Console:Println("Imię chłopaka: ", boyfriend)
+    }
 }
 
-val sador = Man("Sador", "15", "none")
-sador:Info()
+val girlName = "ThatOneGirlInFuture"
+val sador = Boy("Sador", "15", girlName)
 
-sadorek("1", "2", "3", "4")
+sador:DisplayInfo()
+val girl = Girl("ThatOneGirlInFuture", "unknown", "sador in future")
+
+girl:DisplayInfo()
