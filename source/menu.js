@@ -5,7 +5,7 @@ switch (option) {
     case 'run': require('./run'); break;
     case 'check': require('./check'); break;
     case undefined: console.log(`
-    SadorLang helper [2]
+    cfslang helper [2]
     use 'run' in order to run program
 
     available commands:

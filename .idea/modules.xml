@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/sadorlang.iml" filepath="$PROJECT_DIR$/.idea/sadorlang.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/cfslang.iml" filepath="$PROJECT_DIR$/.idea/cfslang.iml" />
     </modules>
   </component>
 </project>
