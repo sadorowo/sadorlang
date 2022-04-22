@@ -1,17 +1,19 @@
 const { readFileSync } = require('fs');
 const { Failure } = require('../util/globals');
 const { join } = require('path');
-const C = require('chalk');
+const C = require('colors');
 
-console.log = () => true;
-
+const originalConsoleLog = console.log;
 const check = module.exports.check = function (code) {
     try {
+        console.log = () => true;
         require('../run').run(code, false);
+        console.log = originalConsoleLog;
+
+        console.log(`${C.green('✔️')} Code is valid, no errors detected`);
     } catch (error) {
-        console.log(`${C.red('❌')} Detected error:\n\n`, error);
-    } finally {
-        console.log(`${C.red('✔️')} Code is valid, no errors detected`);
+        console.log = originalConsoleLog;
+        console.log(`${C.red('❌')} Detected error:\n\nName: ${error.name}\nMessage: ${error.message}`);
     }
 }
 

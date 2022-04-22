@@ -1,14 +1,10 @@
 # to jest komentarz
 # druga linia komentarza
 
-object Math {
-    field a
-    field b
-
-    method rand(float) {
-        Console:Println(float)
-    }
+method ZasadyProgramisty() {
+    Console:Println("1. Gdy lud czegoś nie rozumie to niech udaje że rozumie.")
+    Console:Println("2. Gdy wnerwisz się na swój kod to go usuń albo zażyj meliske i się uspokój.")
+    Console:Println("3. Niech inni doceniają Twoje starania.")
 }
 
-val math = Math("1", "2")
-math:rand("123")
+ZasadyProgramisty()
