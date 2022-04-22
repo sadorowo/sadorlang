@@ -10,7 +10,6 @@ function removeIndents(line) {
 }
 
 function typeConvert(raw, convertVariables = true) {
-    if (typeof memory[raw] !== "undefined" && convertVariables) return memory[raw]?.value;
     if (/^method ([a-zA-Z]+)\((.*)?\) {$/g.test(removeIndents(raw))) return;
     
     else if (/\{([^.]+)\}/g.test(raw)) {
@@ -35,6 +34,7 @@ function typeConvert(raw, convertVariables = true) {
 
         if (!memory[FunctionName[0]])
             throw new Failure({ name: 'VariableFailure', message: 'unknown function' })
+
         if (FunctionName.length === 2) {
             if (typeof memory[FunctionName[0]] !== "object")
                 throw new Failure({ name: 'TypeFailure', message: `expected class, found ${typeof memory[FunctionName[0]]}` })
@@ -42,7 +42,16 @@ function typeConvert(raw, convertVariables = true) {
             if (typeof memory[FunctionName[0]]?.value?.[FunctionName[1]] !== "object")
                 throw new Failure({ name: 'MethodFailure', message: `method ${FunctionName[1]} not found in this class` })
 
-            const { value } = memory[FunctionName[0]]?.value?.[FunctionName[1]];
+            const { value, arguments } = memory[FunctionName[0]]?.value?.[FunctionName[1]];
+
+            for (const argument of arguments) {
+                const [providedArgument, funcArgument] = [FunctionArguments[arguments.indexOf(argument)], argument];
+
+                const argumentPosition = FunctionArguments.indexOf(FunctionArguments[arguments.indexOf(argument)]);
+                if (FunctionArguments[argumentPosition]) FunctionArguments[argumentPosition] = providedArgument;
+
+                memory[funcArgument] = { value: providedArgument || memory[funcArgument]?.value || nil, mutable: true };
+            }
 
             value(...FunctionArguments)
         } else {
@@ -65,7 +74,6 @@ function typeConvert(raw, convertVariables = true) {
 
             for (const argument of arguments) {
                 const [providedArgument, funcArgument] = [FunctionArguments[arguments.indexOf(argument)], argument];
-                // FIXME:
 
                 const argumentPosition = FunctionArguments.indexOf(FunctionArguments[arguments.indexOf(argument)]);
                 if (FunctionArguments[argumentPosition]) FunctionArguments[argumentPosition] = providedArgument;
@@ -82,6 +90,7 @@ function typeConvert(raw, convertVariables = true) {
 
     else if (/"(.*)"/g.test(raw)) return raw.slice(1, -1);
     else if (/[0-9]/g.test(raw)) return Number(raw);
+    else if (typeof memory[raw] !== "undefined" && convertVariables) return memory[raw]?.value;
     else if (raw && convertVariables) throw new Failure({ name: 'TypeFailure', message: `found variable/line with unknown type ${raw}` });
     else return raw;
 }

@@ -12,7 +12,8 @@ module.exports = function (line) {
         if (TypeValue.length && !arguments.length)
         throw new Failure({ name: 'TypeFailure', message: 'please separate func arguments by comma' })
 
-        for (const argument of arguments) memory[argument] = { value: nil, mutable: true }
+        for (const argument of arguments)
+            if (!memory[argument]) memory[argument] = { value: nil, mutable: true }
 
         memory[Name] = {
             value: () => run(to_method(code, line)
@@ -33,15 +34,19 @@ module.exports = function (line) {
         const object = {};
 
         while (!/^}$/g.test(code[actualLineIndex])) {
-            if (/^method ([a-zA-Z]+)\(\) {$/g.test(Helpers.removeIndents(code[actualLineIndex])))
+            if (/^method ([a-zA-Z]+)\(.*\) {$/g.test(Helpers.removeIndents(code[actualLineIndex])))
             { 
-                const [, Name] = /^method ([a-zA-Z]+)\(\) {$/g.exec(Helpers.removeIndents(code[actualLineIndex]));
+                const [, Name, Arguments] = /^method ([a-zA-Z]+)\((.*)\) {$/g.exec(Helpers.removeIndents(code[actualLineIndex]));
+                const FormattedArguments = Arguments.split(/,\s|,/g).filter((argument) => argument.length)
+
+                for (const argument of FormattedArguments)
+                    if (!memory[argument]) memory[argument] = { value: nil, mutable: true }
 
                 object[Name] = { 
                     value: () => run(to_method(code, line, false).trim()
                     .replace(/\r\n/g, '\n\n')
                     .split('\n')),
-                    arguments: [],
+                    arguments: FormattedArguments,
                     mutable: false 
                 }; 
                 actualLineIndex++ 
