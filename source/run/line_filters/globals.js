@@ -1,5 +1,5 @@
-const { Failure } = require('../../util/globals');
 const { readFileSync } = require('fs');
+const { Failure } = require('../../util/globals');
 const { join } = require('path');
 const { run } = require('..');
 const Helpers = require('../../util/helpers');

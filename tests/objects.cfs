@@ -1,0 +1,7 @@
+mod datamod
+
+val cfs = Chlopak("Franek", "15")
+cfs:Informacje()
+
+val dziewczyna = Dziewczyna("ktoś", "nie wiem ile")
+dziewczyna:Informacje("cfs")

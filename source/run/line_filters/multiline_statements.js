@@ -13,7 +13,7 @@ module.exports = function (code, line) {
         throw new Failure({ name: 'TypeFailure', message: 'please separate func arguments by comma' })
 
         for (const argument of arguments)
-            if (!memory[argument]) memory[argument] = { value: nil, mutable: true }
+            if (!memory[argument]) memory[argument] = { value: nil, mutable: false }
 
         memory[Name] = {
             value: () => run(to_method(code, line)
@@ -40,7 +40,7 @@ module.exports = function (code, line) {
                 const FormattedArguments = Arguments.split(/,\s|,/g).filter((argument) => argument.length)
 
                 for (const argument of FormattedArguments)
-                    if (!memory[argument]) memory[argument] = { value: nil, mutable: true }
+                    if (!memory[argument]) memory[argument] = { value: nil, mutable: false }
 
                 object[Name] = { 
                     value: () => run(to_method(code, line, false).trim()
@@ -54,7 +54,7 @@ module.exports = function (code, line) {
 
             const name = Helpers.removeIndents(code[actualLineIndex]).split(' ').pop();
 
-            if (code[actualLineIndex]) object[name] = memory[name] = { value: nil, mutable: true };
+            if (code[actualLineIndex]) object[name] = memory[name] = { value: nil, mutable: false };
             actualLineIndex++
         }
 

@@ -67,7 +67,7 @@ function typeConvert(raw, convertVariables = true) {
                 const argumentPosition = FunctionArguments.indexOf(FunctionArguments[arguments.indexOf(argument)]);
                 if (FunctionArguments[argumentPosition]) FunctionArguments[argumentPosition] = providedArgument;
 
-                memory[funcArgument] = { value: providedArgument || memory[funcArgument]?.value || nil, mutable: true };
+                memory[funcArgument] = { value: providedArgument || memory[funcArgument]?.value || nil, mutable: false };
             }
 
             value(...FunctionArguments)
@@ -81,7 +81,7 @@ function typeConvert(raw, convertVariables = true) {
 
                 for (const field of global.Object.keys(value)) {
                     object[field] = FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field];
-                    memory[field] = { value: FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field], mutable: true }
+                    memory[field] = { value: FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field], mutable: false }
                 }
 
                 return object;
@@ -94,7 +94,7 @@ function typeConvert(raw, convertVariables = true) {
 
                 const argumentPosition = FunctionArguments.indexOf(FunctionArguments[arguments.indexOf(argument)]);
                 if (FunctionArguments[argumentPosition]) FunctionArguments[argumentPosition] = providedArgument;
-                memory[funcArgument] = { value: providedArgument || nil, mutable: true };
+                memory[funcArgument] = { value: providedArgument || nil, mutable: false };
             }
 
             if (typeof value !== "function" && !global.Object.keys(value))

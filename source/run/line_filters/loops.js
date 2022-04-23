@@ -32,7 +32,7 @@ module.exports = function (code, line) {
         for (const index of memory[List].value) {
             memory[Key] = {
                 value: index,
-                mutable: true
+                mutable: false
             };
 
             run(method)
