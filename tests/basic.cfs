@@ -7,4 +7,4 @@ method ZasadyProgramisty() {
     Console:Println("3. Niech inni doceniają Twoje starania.")
 }
 
-ZasadyProgramisty()
+# ZasadyProgramisty()
