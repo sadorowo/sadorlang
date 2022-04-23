@@ -70,6 +70,9 @@ function to_method(code, line, check_indents = true) {
     let actualLineIndex = code.indexOf(line) + 1
     let functionCode = ''
 
+    if (!code.some((line) => /^}$/g.test(line)))
+        throw new Failure({ name: 'SyntaxFailure', message: 'missing function end' })
+
     while (!/}/g.test(code[actualLineIndex])) {
         if (check_indents && code[actualLineIndex] && Helpers.removeIndents(code[actualLineIndex]) === code[actualLineIndex])
             throw new Failure({ name: 'TypeFailure', message: `no indent detected at line ${actualLineIndex / 2 + 1}` })

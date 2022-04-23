@@ -1,5 +1,5 @@
 {
-  "name": "sadorlang",
+  "name": "cfslang",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sadorowo/sadorlang.git"
+    "url": "git+https://github.com/cfshere/cfslang.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/sadorowo/sadorlang/issues"
+    "url": "https://github.com/cfshere/cfslang/issues"
   },
-  "homepage": "https://github.com/sadorowo/sadorlang#readme",
+  "homepage": "https://github.com/cfshere/cfslang#readme",
   "dependencies": {
     "@types/node": "^17.0.23",
     "colors": "^1.4.0",
