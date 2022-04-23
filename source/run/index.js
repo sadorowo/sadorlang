@@ -6,11 +6,10 @@ module.exports.memory = {};
 require('../util/global_variables');
 const run = module.exports.run = function (code, export_code = true) {
     if (export_code) module.exports.code = code;
+
     for (const line of code) {
         for (const checkFunction of readdirSync(join(process.cwd(), 'source', 'run', 'line_filters')).map((file) => require(`./line_filters/${file}`)))
-
             checkFunction(line)
-        // throw new Failure({ name: 'SyntaxFailure', message: 'invalid syntax' })
     }
 }
 

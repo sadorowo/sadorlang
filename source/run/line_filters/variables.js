@@ -40,5 +40,5 @@ module.exports = function (line) {
 
         memory[Name] = { value: memory[Name].value, mutable: true };
     } else if (/([a-zA-Z]+):?([a-zA-Z]+)\((.*)\)/g.test(line))
-    Helpers.typeConvert(line)
+    Helpers.typeConvert(line); else return 0;
 }

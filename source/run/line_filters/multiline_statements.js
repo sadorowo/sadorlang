@@ -63,7 +63,39 @@ module.exports = function (line) {
             arguments: [],
             mutable: false
         }
-    } 
+    } else if (/^once ([0-9]+) {$/g.test(line)) {
+        const [, Name] = line.matchAll(/^once ([0-9]+) {$/g).next()?.value
+        const Time = Number(Name);
+
+        if (isNaN(Time)) throw new Failure({ name: 'TypeFailure', message: 'Invalid time passed' })
+        if (Time < 1000) throw new Failure({ name: 'SecurityFailure', message: 'due to security reasons you must provide time in milliseconds, greater or equal than 1000' })
+
+        setInterval(() => run(to_method(code, line)
+        .trim()
+        .replace(/\r\n/g, '\n\n')
+        .split('\n')), Time)
+    } else if (/^iter ([a-zA-Z0-9\/\.]+) from ([a-zA-Z0-9\/\.]+) {$/g.test(line)) {
+        const [, Key, List] = line.matchAll(/^iter ([a-zA-Z0-9\/\.]+) from ([a-zA-Z0-9\/\.]+) {$/g).next()?.value
+
+        if (!memory[List] || !Array.isArray(memory[List].value)) throw new Failure({ name: 'TypeFailure', message: `${List} is not iterable` })
+
+        const method = to_method(code, line)
+        .trim()
+        .replace(/\r\n/g, '\n\n')
+        .split('\n');
+
+        if (method.some((line) => /^val ([a-zA-Z0-9\/\\.]+) = ([a-zA-Z0-9]+)?(.*)$/g.test(line)))
+        throw new Failure({ name: 'SecurityFailure', message: 'you can define only mutable variables in loops' })
+
+        for (const index of memory[List].value) {
+            memory[Key] = {
+                value: index,
+                mutable: true
+            };
+
+            run(method, false)
+        }
+    } else return 0;
 }
 
 function to_method(code, line, check_indents = true) {
