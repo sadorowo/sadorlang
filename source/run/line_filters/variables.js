@@ -2,7 +2,7 @@ const { Failure } = require('../../util/globals');
 const { memory } = require('..');
 const Helpers = require('../../util/helpers');
 
-module.exports = function (line) {
+module.exports = function (_, line) {
     if (Helpers.removeIndents(line).startsWith('#')) return true;
     
     if (/^val ([a-zA-Z0-9\/\\.]+) = ([a-zA-Z0-9]+)?(.*)$/g.test(line)) {

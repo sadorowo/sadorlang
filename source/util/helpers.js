@@ -1,9 +1,26 @@
+const { readdirSync, readFileSync } = require('fs');
 const { Failure, nil } = require('./globals');
 const { memory } = require('../run');
+const { join } = require('path');
+require('colors');
+
+function is_module(name) {
+    try {
+        const files = readdirSync(join(process.cwd(), name), { withFileTypes: true });
+        return ['mod.yaml', 'main.cfs'].some((item) => files.indexOf(item) === -1)
+    } catch { return false; }
+};
 
 function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms))
-}
+};
+
+function print_progress(desc, progress) {
+    console.log(`
+        ${desc}
+        [${'█'.green.repeat(progress === 1 ? progress : progress / 2)}] ${progress}%
+    `)
+};
 
 function removeIndents(line) {
     return line.split(/^\s+/g).join('')
@@ -95,4 +112,4 @@ function typeConvert(raw, convertVariables = true) {
     else return raw;
 }
 
-module.exports = { wait, removeIndents, typeConvert }
+module.exports = { is_module, wait, print_progress, removeIndents, typeConvert }
