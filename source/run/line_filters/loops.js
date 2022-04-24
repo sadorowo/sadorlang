@@ -3,7 +3,7 @@ const { memory, run } = require('..');
 const Helpers = require('../../util/helpers');
 
 module.exports = function (code, line) {
-    if (Helpers.removeIndents(line).startsWith('#')) return true;
+    if (Helpers.removeIndents(line).startsWith('#')) return;
     
     if (/^once ([0-9]+) {$/g.test(line)) {
         const [, Name] = line.matchAll(/^once ([0-9]+) {$/g).next()?.value

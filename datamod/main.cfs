@@ -2,6 +2,8 @@ method WyswietlZasadyProgramisty() {
     Console:Println("1. Gdy lud czegoś nie rozumie to niech udaje że rozumie.")
     Console:Println("2. Gdy wnerwisz się na swój kod to go usuń albo zażyj meliske i się uspokój.")
     Console:Println("3. Niech inni doceniają Twoje starania.")
+
+    return "Wyświetlono!"
 }
 
 object Chlopak {
@@ -9,7 +11,8 @@ object Chlopak {
     field wiek
 
     method Informacje(dziewczyna) {
-        Console:Println(imie, " ma ", wiek, " lat i jego dziewczyna nazywa sie ", dziewczyna, ".")
+        val info = Formatter:FormatString("$ ma $ lat i jego dziewczyna nazywa sie $.", imie, wiek, dziewczyna)
+        Console:Println(info)
     }
 }
 
@@ -18,6 +21,14 @@ object Dziewczyna {
     field wiek
 
     method Informacje(chlopak) {
-        Console:Println(imie, " ma ", wiek, " lat i jej chlopak nazywa sie ", chlopak, ".")
+        val info = Formatter:FormatString("$ ma $ lat i jej chlopak nazywa sie $.", imie, wiek, chlopak)
+        Console:Println(info)
+    }
+}
+
+object Zakupy {
+    method Naleznosc(produkty) {
+        val naleznosc = Random:Int(30, 60)
+        return Formatter:FormatString("Za produkty: $ musisz zapłacić $zł.", produkty, naleznosc)
     }
 }

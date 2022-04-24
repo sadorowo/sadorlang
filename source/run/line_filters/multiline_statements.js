@@ -3,11 +3,12 @@ const { memory, run } = require('..');
 const Helpers = require('../../util/helpers');
 
 module.exports = function (code, line) {
-    if (Helpers.removeIndents(line).startsWith('#')) return true;
+    if (Helpers.removeIndents(line).startsWith('#')) return;
     
     if (/^method ([a-zA-Z]+)\(.*\) {$/g.test(line)) {
         const [, Name, TypeValue] = line.matchAll(/^method ([a-zA-Z]+)\((.*)\) {$/g).next()?.value
-        const arguments = TypeValue.split(/,\s|,/g);
+        const arguments = TypeValue?.split(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)
+        ?.filter((key) => key && ![',', ', '].includes(key));
 
         if (TypeValue.length && !arguments.length)
         throw new Failure({ name: 'TypeFailure', message: 'please separate func arguments by comma' })
@@ -52,9 +53,10 @@ module.exports = function (code, line) {
                 actualLineIndex++ 
             }
 
-            const name = Helpers.removeIndents(code[actualLineIndex]).split(' ').pop();
-
-            if (code[actualLineIndex]) object[name] = memory[name] = { value: nil, mutable: false };
+            if (Helpers.removeIndents(code[actualLineIndex]).startsWith('field')) {
+                const name = Helpers.removeIndents(code[actualLineIndex]).split(' ').pop();
+                if (code[actualLineIndex]) object[name] = memory[name] = { value: nil, mutable: false };
+            }
             actualLineIndex++
         }
 

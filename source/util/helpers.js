@@ -46,7 +46,8 @@ function typeConvert(raw, convertVariables = true) {
         const Raw = raw.matchAll(/(([a-zA-Z]+:)?([a-zA-Z]+))\((.*)\)/g).next()?.value;
 
         if (removeIndents(raw) !== raw) return;
-        let [FunctionName, FunctionArguments] = [Raw[1].split(':') || Raw[1], Raw[4]?.split(/,\s|,/g)
+        let [FunctionName, FunctionArguments] = [Raw[1].split(':') || Raw[1], Raw[4]?.split(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)
+            ?.filter((key) => key && ![',', ', '].includes(key))
             ?.map((val) => typeConvert(val, true)) || []]
 
         if (!memory[FunctionName[0]])
@@ -70,7 +71,7 @@ function typeConvert(raw, convertVariables = true) {
                 memory[funcArgument] = { value: providedArgument || memory[funcArgument]?.value || nil, mutable: false };
             }
 
-            value(...FunctionArguments)
+            return value(...FunctionArguments)
         } else {
             if (
                 typeof memory[FunctionName[0]]?.value
@@ -83,8 +84,6 @@ function typeConvert(raw, convertVariables = true) {
                     object[field] = FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field];
                     memory[field] = { value: FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field], mutable: false }
                 }
-
-                return object;
             }
 
             const { value, arguments } = memory[FunctionName[0]];
