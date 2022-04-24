@@ -1,34 +1,5 @@
 const { memory } = require('../run');
 
-memory['Console'] = {
-    value: {
-        'Println': {
-            value: function (...text) {
-                return console.log(text.join('').replace(/\\n/g, '\n'))
-            },
-            arguments: ['text']
-        }
-    },
-    mutable: false 
-}
-
-memory['Formatter'] = {
-    value: {
-        'FormatString': {
-            value: function (...format) {
-                let [string, ...args] = format;
-                
-                for (const argument of args) {
-                    string = string.replace('$', argument)
-                }
-
-                return string
-            },
-            arguments: ['text']
-        }
-    }
-}
-
 memory['Random'] = {
     value: {
         'Choice': {
@@ -44,6 +15,45 @@ memory['Random'] = {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             },
             arguments: ['min', 'max']
+        }
+    }
+}
+
+memory['Sys'] = {
+    value: {
+        'Printf': {
+            value: function (...format) {
+                let [string, ...args] = format;
+                
+                for (const argument of args) {
+                    string = string
+                    .replace(`$(${args.indexOf(argument)})`, argument)
+                    .replace(/\\n/g, '\n')
+                }
+
+                return console.log(string)
+            },
+            arguments: ['string', 'args']
+        },
+        'Fmt': {
+            value: function (...format) {
+                let [string, ...args] = format;
+                
+                for (const argument of args) {
+                    string = string
+                    .replace(`$(${args.indexOf(argument)})`, argument)
+                    .replace(/\\n/g, '\n')
+                }
+
+                return string
+            },
+            arguments: ['string', 'args']
+        },
+        'Exit': {
+            value: function (code) {
+                return process.exit(code)
+            },
+            arguments: []
         }
     }
 }

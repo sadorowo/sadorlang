@@ -1,9 +1,7 @@
 mod datamod
 
 val status = WyswietlZasadyProgramisty()
-val mut formatted = Formatter:FormatString("Status wykonanej funkcji: $\n\n", status)
-
-Console:Println(formatted)
+Sys:Printf("Status wykonanej funkcji: $(0)\n\n", status)
 
 val cfs = Chlopak("Franek", "15")
 cfs:Informacje()

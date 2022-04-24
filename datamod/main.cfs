@@ -1,7 +1,7 @@
 method WyswietlZasadyProgramisty() {
-    Console:Println("1. Gdy lud czegoś nie rozumie to niech udaje że rozumie.")
-    Console:Println("2. Gdy wnerwisz się na swój kod to go usuń albo zażyj meliske i się uspokój.")
-    Console:Println("3. Niech inni doceniają Twoje starania.")
+    Sys:Printf("1. Gdy lud czegoś nie rozumie to niech udaje że rozumie.")
+    Sys:Printf("2. Gdy wnerwisz się na swój kod to go usuń albo zażyj meliske i się uspokój.")
+    Sys:Printf("3. Niech inni doceniają Twoje starania.")
 
     return "Wyświetlono!"
 }
@@ -11,8 +11,7 @@ object Chlopak {
     field wiek
 
     method Informacje(dziewczyna) {
-        val info = Formatter:FormatString("$ ma $ lat i jego dziewczyna nazywa sie $.", imie, wiek, dziewczyna)
-        Console:Println(info)
+        Sys:Printf("$(0) ma $(1) lat i jego dziewczyna nazywa sie $(2).", imie, wiek, dziewczyna)
     }
 }
 
@@ -21,14 +20,13 @@ object Dziewczyna {
     field wiek
 
     method Informacje(chlopak) {
-        val info = Formatter:FormatString("$ ma $ lat i jej chlopak nazywa sie $.", imie, wiek, chlopak)
-        Console:Println(info)
+        Sys:Printf("$(0) ma $(1) lat i jej chlopak nazywa sie $(2).", imie, wiek, chlopak)
     }
 }
 
 object Zakupy {
     method Naleznosc(produkty) {
         val naleznosc = Random:Int(30, 60)
-        return Formatter:FormatString("Za produkty: $ musisz zapłacić $zł.", produkty, naleznosc)
+        return Sys:Fmt("Za produkty: $(0) musisz zapłacić $(1)zł.", produkty, naleznosc)
     }
 }

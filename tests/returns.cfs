@@ -2,4 +2,4 @@ mod datamod
 
 val kasa = Zakupy()
 val naleznosc = kasa:Naleznosc("dwabułki, kiełbasa, dwa jabłka")
-Console:Println(naleznosc)
+Sys:Printf(naleznosc)

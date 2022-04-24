@@ -27,7 +27,8 @@ function removeIndents(line) {
 }
 
 function typeConvert(raw, convertVariables = true) {
-    if (/^method ([a-zA-Z]+)\((.*)?\) {$/g.test(removeIndents(raw))) return;
+    if (/^method ([a-zA-Z]+)\((.*)?\) {$/g.test(removeIndents(raw)) ||
+        /^if (.*) {$/g.test(removeIndents(raw))) return;
     
     else if (/\{([^.]+)\}/g.test(raw)) {
         const convertedValue = raw
@@ -111,4 +112,8 @@ function typeConvert(raw, convertVariables = true) {
     else return raw;
 }
 
-module.exports = { is_module, wait, print_progress, removeIndents, typeConvert }
+function asBool(value) {
+    return Boolean(memory[value]?.value) || typeConvert(value, false)
+}
+
+module.exports = { is_module, wait, print_progress, removeIndents, typeConvert, asBool }
