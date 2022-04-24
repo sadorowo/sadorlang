@@ -35,7 +35,7 @@ sudo chmod +x ./cfsl.sh
 ```
 val text = "Hello, World!"
 
-Console:Println(text)
+Sys:Printf(text)
 ```
 2. Person object:
 ```
@@ -47,7 +47,7 @@ object Man {
 	field wife
 
 	method Info() {
-		Console:Println(name, " is ", age, " years old and his wife's name is ", wife, ".")
+		Sys:Printf("$(0) is $(1) years old and his wife's name is $(2).", name, age, wife)
 	}
 }
 
@@ -57,7 +57,7 @@ object Woman {
 	field husband
 
 	method Info() {
-		Console:Println(name, " is ", age, " years old and her husband's name is ", husband, ".")
+		Sys:Printf("$(0) is $(1) years old and her husband's name is $(2).", name, age, husband)
 	}
 }
 
@@ -67,17 +67,28 @@ cfs:Info() // cfs is 15 years old and his wife's name is none.
 val thatGirl = Woman("ThatOneGirl", "???", "cfs (in future)")
 thatGirl:Info() // ThatOneGirl is ??? years old and her husband's name is cfs (in future).
 ```
- 3.  Functions
- ```
+3.  Functions
+```
  method printGay(person) {
-	 Console:Println(person, " is a gay.")
+	Sys:Printf("$(0) is a gay.", person)
  }
 
  printGay("nigger")
- ```
+```
+4. If conditions
+```
+val to_true = "1234"
+
+if to_true {
+	Sys:Printf("this is true")
+	return 
+}
+
+Sys:Printf("this is false")
+```
 
 =======
 # TODO:
-- Function returns
+none :D
 ---
 ### This is the end!
