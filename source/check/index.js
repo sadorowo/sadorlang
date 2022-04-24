@@ -7,7 +7,7 @@ const originalConsoleLog = console.log;
 const check = module.exports.check = function (code) {
     try {
         console.log = () => true;
-        require('../run').run(code, false);
+        require('../run').run(code);
         console.log = originalConsoleLog;
 
         console.log(`${C.green('✔️')} Code is valid, no errors detected`);

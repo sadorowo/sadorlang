@@ -1,19 +1,20 @@
 const { Failure, nil } = require('../../util/globals');
-const { code, memory, run } = require('..');
+const { memory, run } = require('..');
 const Helpers = require('../../util/helpers');
 
-module.exports = function (line) {
-    if (Helpers.removeIndents(line).startsWith('#')) return true;
+module.exports = function (code, line) {
+    if (Helpers.removeIndents(line).startsWith('#')) return;
     
     if (/^method ([a-zA-Z]+)\(.*\) {$/g.test(line)) {
         const [, Name, TypeValue] = line.matchAll(/^method ([a-zA-Z]+)\((.*)\) {$/g).next()?.value
-        const arguments = TypeValue.split(/,\s|,/g);
+        const arguments = TypeValue?.split(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)
+        ?.filter((key) => key && ![',', ', '].includes(key));
 
         if (TypeValue.length && !arguments.length)
         throw new Failure({ name: 'TypeFailure', message: 'please separate func arguments by comma' })
 
         for (const argument of arguments)
-            if (!memory[argument]) memory[argument] = { value: nil, mutable: true }
+            if (!memory[argument]) memory[argument] = { value: nil, mutable: false }
 
         memory[Name] = {
             value: () => run(to_method(code, line)
@@ -40,7 +41,7 @@ module.exports = function (line) {
                 const FormattedArguments = Arguments.split(/,\s|,/g).filter((argument) => argument.length)
 
                 for (const argument of FormattedArguments)
-                    if (!memory[argument]) memory[argument] = { value: nil, mutable: true }
+                    if (!memory[argument]) memory[argument] = { value: nil, mutable: false }
 
                 object[Name] = { 
                     value: () => run(to_method(code, line, false).trim()
@@ -52,9 +53,10 @@ module.exports = function (line) {
                 actualLineIndex++ 
             }
 
-            const name = Helpers.removeIndents(code[actualLineIndex]).split(' ').pop();
-
-            if (code[actualLineIndex]) object[name] = memory[name] = { value: nil, mutable: true };
+            if (Helpers.removeIndents(code[actualLineIndex]).startsWith('field')) {
+                const name = Helpers.removeIndents(code[actualLineIndex]).split(' ').pop();
+                if (code[actualLineIndex]) object[name] = memory[name] = { value: nil, mutable: false };
+            }
             actualLineIndex++
         }
 
@@ -63,7 +65,7 @@ module.exports = function (line) {
             arguments: [],
             mutable: false
         }
-    } 
+    } else return 0;
 }
 
 function to_method(code, line, check_indents = true) {

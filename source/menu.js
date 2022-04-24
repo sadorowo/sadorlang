@@ -1,17 +1,34 @@
 const { Failure } = require('./util/globals');
-const option = process.argv[2];
+const { readFileSync } = require('fs');
+const { join } = require('path');
 
-switch (option) {
-    case 'run': require('./run'); break;
+switch (process.argv[2]) {
+    case 'run': case 'r': {
+        if (!process.argv[3])
+        throw new Failure({ name: 'ArgumentFailure', message: 'file not found' })
+
+        const code = module.exports.code = readFileSync(join(process.argv[3]))
+            .toString('utf-8')
+            .trim()
+            .replace(/\r\n/g, '\n\n')
+            .split('\n');
+        require('./run').run(code)
+        break
+    }
     case 'check': require('./check'); break;
+    case 'crmod': require('./crmod'); break;
+    case 'rmmod': case 'delmod': require('./rmmod'); break;
     case undefined: console.log(`
-    cfslang helper [2]
-    use 'run' in order to run program
+        cfslang helper [3]
+        use 'run' in order to run program
+        available commands:
 
-    available commands:
-    run [file_path] - run program
-    check [file_path] - check validity of code
-    [nil] - show this message
+        check [file_path] - check file validity
+        run [file_path] - run program
+        crmod [name] - create module
+        delmod [name] - delete module
+
+        [nil] - show this message
     `); break;
-    default: throw new Failure({ name: 'StrFailure', message: `invalid argument: ${option}` });
-} 
+    default: throw new Failure({ name: 'StrFailure', message: `invalid argument: ${process.argv[2]}` });  
+}  

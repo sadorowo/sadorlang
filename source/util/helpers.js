@@ -1,9 +1,26 @@
+const { readdirSync, readFileSync } = require('fs');
 const { Failure, nil } = require('./globals');
 const { memory } = require('../run');
+const { join } = require('path');
+require('colors');
+
+function is_module(name) {
+    try {
+        const files = readdirSync(join(process.cwd(), name), { withFileTypes: true });
+        return ['mod.yaml', 'main.cfs'].some((item) => files.indexOf(item) === -1)
+    } catch { return false; }
+};
 
 function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms))
-}
+};
+
+function print_progress(desc, progress) {
+    console.log(`
+        ${desc}
+        [${'█'.green.repeat(progress === 1 ? progress : progress / 2)}] ${progress}%
+    `)
+};
 
 function removeIndents(line) {
     return line.split(/^\s+/g).join('')
@@ -29,7 +46,8 @@ function typeConvert(raw, convertVariables = true) {
         const Raw = raw.matchAll(/(([a-zA-Z]+:)?([a-zA-Z]+))\((.*)\)/g).next()?.value;
 
         if (removeIndents(raw) !== raw) return;
-        let [FunctionName, FunctionArguments] = [Raw[1].split(':') || Raw[1], Raw[4]?.split(/,\s|,/g)
+        let [FunctionName, FunctionArguments] = [Raw[1].split(':') || Raw[1], Raw[4]?.split(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)
+            ?.filter((key) => key && ![',', ', '].includes(key))
             ?.map((val) => typeConvert(val, true)) || []]
 
         if (!memory[FunctionName[0]])
@@ -50,10 +68,10 @@ function typeConvert(raw, convertVariables = true) {
                 const argumentPosition = FunctionArguments.indexOf(FunctionArguments[arguments.indexOf(argument)]);
                 if (FunctionArguments[argumentPosition]) FunctionArguments[argumentPosition] = providedArgument;
 
-                memory[funcArgument] = { value: providedArgument || memory[funcArgument]?.value || nil, mutable: true };
+                memory[funcArgument] = { value: providedArgument || memory[funcArgument]?.value || nil, mutable: false };
             }
 
-            value(...FunctionArguments)
+            return value(...FunctionArguments)
         } else {
             if (
                 typeof memory[FunctionName[0]]?.value
@@ -64,10 +82,8 @@ function typeConvert(raw, convertVariables = true) {
 
                 for (const field of global.Object.keys(value)) {
                     object[field] = FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field];
-                    memory[field] = { value: FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field], mutable: true }
+                    memory[field] = { value: FunctionArguments[global.Object.keys(value).indexOf(field)] || value[field], mutable: false }
                 }
-
-                return object;
             }
 
             const { value, arguments } = memory[FunctionName[0]];
@@ -77,7 +93,7 @@ function typeConvert(raw, convertVariables = true) {
 
                 const argumentPosition = FunctionArguments.indexOf(FunctionArguments[arguments.indexOf(argument)]);
                 if (FunctionArguments[argumentPosition]) FunctionArguments[argumentPosition] = providedArgument;
-                memory[funcArgument] = { value: providedArgument || nil, mutable: true };
+                memory[funcArgument] = { value: providedArgument || nil, mutable: false };
             }
 
             if (typeof value !== "function" && !global.Object.keys(value))
@@ -95,4 +111,4 @@ function typeConvert(raw, convertVariables = true) {
     else return raw;
 }
 
-module.exports = { wait, removeIndents, typeConvert }
+module.exports = { is_module, wait, print_progress, removeIndents, typeConvert }
