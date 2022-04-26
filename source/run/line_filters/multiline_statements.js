@@ -3,85 +3,132 @@ const { memory, run } = require('..');
 const Helpers = require('../../util/helpers');
 
 module.exports = function (code, line) {
-    if (Helpers.removeIndents(line).startsWith('#')) return;
-    
-    if (/^method ([a-zA-Z]+)\(.*\) {$/g.test(line)) {
-        const [, Name, TypeValue] = line.matchAll(/^method ([a-zA-Z]+)\((.*)\) {$/g).next()?.value
-        const arguments = TypeValue?.split(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)
-        ?.filter((key) => key && ![',', ', '].includes(key));
+	if (Helpers.removeIndents(line).startsWith('#')) return;
 
-        if (TypeValue.length && !arguments.length)
-        throw new Failure({ name: 'TypeFailure', message: 'please separate func arguments by comma' })
+	if (/^method ([a-zA-Z]+)\(.*\) {$/g.test(line)) {
+		const [, Name, TypeValue] = line
+			.matchAll(/^method ([a-zA-Z]+)\((.*)\) {$/g)
+			.next()?.value;
+		const arguments = TypeValue?.split(
+			/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g
+		)?.filter((key) => key && ![',', ', '].includes(key));
 
-        for (const argument of arguments)
-            if (!memory[argument]) memory[argument] = { value: nil, mutable: false }
+		if (TypeValue.length && !arguments.length)
+			throw new Failure({
+				name: 'TypeFailure',
+				message: 'please separate func arguments by comma',
+			});
 
-        memory[Name] = {
-            value: () => run(to_method(code, line)
-                .trim()
-                .replace(/\r\n/g, '\n\n')
-                .split('\n')),
-            arguments,
-            mutable: false
-        }
-    } else if (/^object ([a-zA-Z]+) {$/g.test(line)) {
-        const [, Name] = line.matchAll(/^object ([a-zA-Z]+) {$/g).next()?.value
+		for (const argument of arguments)
+			if (!memory[argument])
+				memory[argument] = { value: nil, mutable: false };
 
-        if (typeof memory[Name] !== "undefined")
-        throw new Failure({ name: 'TypeFailure', message: 'variable with this name already exists' })
+		memory[Name] = {
+			value: () =>
+				run(
+					to_method(code, line)
+						.trim()
+						.replace(/\r\n/g, '\n\n')
+						.split('\n')
+				),
+			arguments,
+			mutable: false,
+		};
+	} else if (/^object ([a-zA-Z]+) {$/g.test(line)) {
+		const [, Name] = line.matchAll(/^object ([a-zA-Z]+) {$/g).next()?.value;
 
-        let actualLineIndex = code.indexOf(line) + 1
+		if (typeof memory[Name] !== 'undefined')
+			throw new Failure({
+				name: 'TypeFailure',
+				message: 'variable with this name already exists',
+			});
 
-        const object = {};
+		let actualLineIndex = code.indexOf(line) + 1;
 
-        while (!/^}$/g.test(code[actualLineIndex])) {
-            if (/^method ([a-zA-Z]+)\(.*\) {$/g.test(Helpers.removeIndents(code[actualLineIndex])))
-            { 
-                const [, Name, Arguments] = /^method ([a-zA-Z]+)\((.*)\) {$/g.exec(Helpers.removeIndents(code[actualLineIndex]));
-                const FormattedArguments = Arguments.split(/,\s|,/g).filter((argument) => argument.length)
+		const object = {};
 
-                for (const argument of FormattedArguments)
-                    if (!memory[argument]) memory[argument] = { value: nil, mutable: false }
+		while (!/^}$/g.test(code[actualLineIndex])) {
+			if (
+				/^method ([a-zA-Z]+)\(.*\) {$/g.test(
+					Helpers.removeIndents(code[actualLineIndex])
+				)
+			) {
+				const [, Name, Arguments] =
+					/^method ([a-zA-Z]+)\((.*)\) {$/g.exec(
+						Helpers.removeIndents(code[actualLineIndex])
+					);
+				const FormattedArguments = Arguments.split(/,\s|,/g).filter(
+					(argument) => argument.length
+				);
 
-                object[Name] = { 
-                    value: () => run(to_method(code, line, false).trim()
-                    .replace(/\r\n/g, '\n\n')
-                    .split('\n')),
-                    arguments: FormattedArguments,
-                    mutable: false 
-                }; 
-                actualLineIndex++ 
-            }
+				for (const argument of FormattedArguments)
+					if (!memory[argument])
+						memory[argument] = { value: nil, mutable: false };
 
-            if (Helpers.removeIndents(code[actualLineIndex]).startsWith('field')) {
-                const name = Helpers.removeIndents(code[actualLineIndex]).split(' ').pop();
-                if (code[actualLineIndex]) object[name] = memory[name] = { value: nil, mutable: false };
-            }
-            actualLineIndex++
-        }
+				object[Name] = {
+					value: () =>
+						run(
+							to_method(code, line, false)
+								.trim()
+								.replace(/\r\n/g, '\n\n')
+								.split('\n')
+						),
+					arguments: FormattedArguments,
+					mutable: false,
+				};
+				actualLineIndex++;
+			}
 
-        memory[Name] = {
-            value: object,
-            arguments: [],
-            mutable: false
-        }
-    } else return 0;
-}
+			if (
+				Helpers.removeIndents(code[actualLineIndex]).startsWith('field')
+			) {
+				const name = Helpers.removeIndents(code[actualLineIndex])
+					.split(' ')
+					.pop();
+				if (code[actualLineIndex])
+					object[name] = memory[name] = {
+						value: nil,
+						mutable: false,
+					};
+			}
+			actualLineIndex++;
+		}
+
+		memory[Name] = {
+			value: object,
+			arguments: [],
+			mutable: false,
+		};
+	} else return 0;
+};
 
 function to_method(code, line, check_indents = true) {
-    let actualLineIndex = code.indexOf(line) + 1
-    let functionCode = ''
+	let actualLineIndex = code.indexOf(line) + 1;
+	let functionCode = '';
 
-    if (!code.some((line) => /^}$/g.test(line)))
-        throw new Failure({ name: 'SyntaxFailure', message: 'missing function end' })
+	if (!code.some((line) => /^}$/g.test(line)))
+		throw new Failure({
+			name: 'SyntaxFailure',
+			message: 'missing function end',
+		});
 
-    while (!/}/g.test(code[actualLineIndex])) {
-        if (check_indents && code[actualLineIndex] && Helpers.removeIndents(code[actualLineIndex]) === code[actualLineIndex])
-            throw new Failure({ name: 'TypeFailure', message: `no indent detected at line ${actualLineIndex / 2 + 1}` })
+	while (!/}/g.test(code[actualLineIndex])) {
+		if (
+			check_indents &&
+			code[actualLineIndex] &&
+			Helpers.removeIndents(code[actualLineIndex]) ===
+				code[actualLineIndex]
+		)
+			throw new Failure({
+				name: 'TypeFailure',
+				message: `no indent detected at line ${
+					actualLineIndex / 2 + 1
+				}`,
+			});
 
-        functionCode += Helpers.removeIndents(code[actualLineIndex]) + '\n'
-        actualLineIndex++
-    }
+		functionCode += Helpers.removeIndents(code[actualLineIndex]) + '\n';
+		actualLineIndex++;
+	}
 
-    return functionCode
+	return functionCode;
 }
