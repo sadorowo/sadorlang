@@ -1,7 +1,7 @@
 const { readFileSync } = require('fs');
 const { Failure } = require('../util/globals');
 const { join } = require('path');
-const C = require('colors');
+require('colors');
 
 const originalConsoleLog = console.log;
 const check = (module.exports.check = function (code) {
@@ -10,11 +10,11 @@ const check = (module.exports.check = function (code) {
 		require('../run').run(code);
 		console.log = originalConsoleLog;
 
-		console.log(`${C.green('✔️')} Code is valid, no errors detected`);
+		console.log(`${'✔️'.green} Code is valid, no errors detected`);
 	} catch (error) {
 		console.log = originalConsoleLog;
 		console.log(
-			`${C.red('❌')} Detected error:\n\nName: ${error.name}\nMessage: ${
+			`${'❌'.red} Detected error:\n\nName: ${error.name}\nMessage: ${
 				error.message
 			}`
 		);

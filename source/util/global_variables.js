@@ -3,7 +3,7 @@ const { memory } = require('../run');
 memory['Random'] = {
 	value: {
 		Choice: {
-			value: function (...choices) {
+			value: function (choices) {
 				return choices[Math.floor(Math.random() * choices.length)];
 			},
 			arguments: ['choices'],

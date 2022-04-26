@@ -42,11 +42,13 @@ function typeConvert(raw, convertVariables = true) {
 		return;
 	else if (/\{([^.]+)\}/g.test(raw)) {
 		const convertedValue = raw
-			.match(/\{([^.]+)\}/g)
+			.match(/\{(.*)\}/g)
 			.shift()
-			.match(/([^.",]+)/g)
+			.trim()
 			.slice(1, -1)
-			.filter((v) => v.trim());
+			.split(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)
+			.filter((v) => v.trim() && v.replace(/\s/g, '') !== ',')
+			.map((v) => v.slice(1, -1));
 
 		if (!convertedValue?.length)
 			throw new Failure({
