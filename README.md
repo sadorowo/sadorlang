@@ -109,7 +109,6 @@ val quotes = { "It's okay, i know someday I'm gonna be with you", "This world ca
 
 Sys:Printf("sad quote for now: $(0) ;c", Random:Choice(quotes))  
 ```
-=======
 
 # TODO:
 
