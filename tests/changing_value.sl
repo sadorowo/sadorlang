@@ -1,7 +1,7 @@
 val imie = "dawniej sador"
 unlock imie
 
-val mut imie = "cfs"
+val mut imie = "Sador"
 Sys:Printf(imie)
 
 lock imie

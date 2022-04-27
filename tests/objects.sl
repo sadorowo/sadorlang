@@ -3,8 +3,8 @@ mod datamod
 val status = WyswietlZasadyProgramisty()
 Sys:Printf("Status wykonanej funkcji: $(0)\n\n", status)
 
-val cfs = Chlopak("Franek", "15")
-cfs:Informacje()
+val Sador = Chlopak("Franek", "15")
+Sador:Informacje()
 
 val dziewczyna = Dziewczyna("ktoś", "nie wiem ile")
-dziewczyna:Informacje("cfs")
+dziewczyna:Informacje("Sador")

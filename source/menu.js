@@ -42,7 +42,7 @@ switch (process.argv[2]) {
 		break;
 	case undefined:
 		console.log(`
-            cfslang helper [3]
+            SadorLang helper [3]
             use ${"'run'".green} in order to run program
             available commands:
 

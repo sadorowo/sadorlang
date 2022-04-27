@@ -13,11 +13,11 @@ module.exports = function (_, line) {
 		if (!Helpers.is_module(Path))
 			throw new Failure({
 				name: 'ModuleFailure',
-				message: `module ${Path} not found, build using cfsl crmod [name]`,
+				message: `module ${Path} not found, build using sl crmod [name]`,
 			});
 
 		return run(
-			readFileSync(join(process.cwd(), Path, 'main.cfs'))
+			readFileSync(join(process.cwd(), Path, 'main.sl'))
 				.toString('utf-8')
 				.trim()
 				.replace(/\r\n/g, '\n\n')

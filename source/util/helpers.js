@@ -9,7 +9,7 @@ function is_module(name) {
 		const files = readdirSync(join(process.cwd(), name), {
 			withFileTypes: true,
 		});
-		return ['mod.yaml', 'main.cfs'].some(
+		return ['mod.yaml', 'main.sl'].some(
 			(item) => files.indexOf(item) === -1
 		);
 	} catch {

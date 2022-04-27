@@ -44,8 +44,8 @@ async function main() {
 				`\n   - ${new Date().toISOString()}` +
 				'\ncreation_date_raw:' +
 				`\n   - ${Date.now()}\n\n` +
-				'# generated with [cfsl crmod], \n' +
-				'# cfslang util to create modules',
+				'# generated with [sl crmod], \n' +
+				'# SadorLang util to create modules',
 			{ encoding: 'utf-8' }
 		);
 
@@ -53,7 +53,7 @@ async function main() {
 		print_progress(desc, 75);
 
 		writeFileSync(
-			join(process.cwd(), modName, 'main.cfs'),
+			join(process.cwd(), modName, 'main.sl'),
 			'# This is your new module. You can now modify this file!',
 			{ encoding: 'utf-8' }
 		);

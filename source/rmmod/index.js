@@ -26,7 +26,7 @@ async function main() {
 		});
 
 	const moduleFiles = readdirSync(join('.', modName));
-	if (['mod.yaml', 'main.cfs'].some((item) => !moduleFiles.includes(item)))
+	if (['mod.yaml', 'main.sl'].some((item) => !moduleFiles.includes(item)))
 		throw new Failure({
 			name: 'StructureFailure',
 			message: 'this directory is not a module',
