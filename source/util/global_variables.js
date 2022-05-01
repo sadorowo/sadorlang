@@ -57,3 +57,14 @@ memory['Sys'] = {
 		},
 	},
 };
+
+memory['Operators'] = {
+	value: {
+		Eq: {
+			value: function (o1, o2) {
+				return o1 === o2
+			},
+			arguments: ['first', 'next']
+		}
+	}
+}

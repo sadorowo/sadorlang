@@ -1,6 +1,6 @@
 const { Failure, nil } = require('./globals');
 const { readdirSync } = require('fs');
-const { memory } = require('../run');
+const { memory, run } = require('../run');
 const { join } = require('path');
 require('colors');
 
@@ -35,11 +35,7 @@ function removeIndents(line) {
 }
 
 function typeConvert(raw, convertVariables = true) {
-	if (
-		/^method ([a-zA-Z]+)\((.*)?\) {$/g.test(removeIndents(raw)) ||
-		/^if (.*) {$/g.test(removeIndents(raw))
-	)
-		return;
+	if (/^method ([a-zA-Z]+)\((.*)?\) {$/g.test(removeIndents(raw))) return;
 	else if (/\{([^.]+)\}/g.test(raw)) {
 		const convertedValue = raw
 			.match(/\{(.*)\}/g)

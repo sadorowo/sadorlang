@@ -112,7 +112,7 @@ function to_method(code, line, check_indents = true) {
 			message: 'missing function end',
 		});
 
-	while (!/}/g.test(code[actualLineIndex])) {
+	while (!/^}$/g.test(code[actualLineIndex])) {
 		if (
 			check_indents &&
 			code[actualLineIndex] &&

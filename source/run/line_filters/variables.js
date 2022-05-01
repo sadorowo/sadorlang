@@ -70,7 +70,7 @@ module.exports = function (_, line) {
 			});
 
 		memory[Name] = { value: memory[Name].value, mutable: true };
-	} else if (/([a-zA-Z]+):?([a-zA-Z]+)\((.*)\)/g.test(line))
+	} else if (/([a-zA-Z]+):?([a-zA-Z]+)\((.*)\)/g.test(line)) //FIXME:
 		return Helpers.typeConvert(line);
 	else return 0;
 };

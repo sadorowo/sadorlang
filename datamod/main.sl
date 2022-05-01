@@ -20,6 +20,11 @@ object Dziewczyna {
     field wiek
 
     method Informacje(chlopak) {
+        if Operators:Eq(imie, "Magda") {
+            Sys:Printf("Magic to zło")
+            Sys:Exit()
+        }
+
         Sys:Printf("$(0) ma $(1) lat i jej chlopak nazywa sie $(2).", imie, wiek, chlopak)
     }
 }

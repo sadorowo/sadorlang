@@ -19,7 +19,7 @@ module.exports = function (code, line) {
 	} else return 0;
 };
 
-function to_method(code, line, check_indents = true) {
+function to_method(code, line, check_indents) {
 	let actualLineIndex = code.indexOf(line) + 1;
 	let functionCode = '';
 
@@ -29,7 +29,7 @@ function to_method(code, line, check_indents = true) {
 			message: 'missing statement end',
 		});
 
-	while (!/}/g.test(code[actualLineIndex])) {
+	while (!/^}$/g.test(code[actualLineIndex])) {
 		if (
 			check_indents &&
 			code[actualLineIndex] &&
