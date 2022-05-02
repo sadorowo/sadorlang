@@ -1,5 +1,5 @@
 @{%
-const customLexer = require("../lexer/lexer");
+    const customLexer = require("../lexer/lexer");
 %}
 
 @lexer customLexer
@@ -16,7 +16,7 @@ program
 statements
     -> null
         {%
-            () =>[]
+            () => []
         %}
     |  _ statement _
         {%
@@ -26,13 +26,15 @@ statements
         {%
             (data) => [data[1], ...data[4]]
         %}
+    |  _ %comment _
 
 statement
-    -> assignment           {% id %}
+    -> assignment          {% id %}
     |  functionCall        {% id %}
     |  functionDefinition  {% id %}
     |  ifStatement         {% id %}
-    |  %identifier          {% id %}
+    |  %comment            {% id %}
+    |  %identifier         {% id %}
 
 assignment -> %identifier _ ":=" _ expression
     {%
@@ -53,13 +55,13 @@ functionCall -> %identifier _ "(" _ expressionList _ ")"
     %}
 
 functionDefinition -> 
-    %identifier _ "(" _ expressionList _ ")"  _ codeBlockWParameters
+    "method" _ %identifier _ "(" _ expressionList _ ")"  _ codeBlockWParameters
     {%
         (data) => ({
             type: "functionDefinition",
-            functionName: data[0],
-            parameters: data[4],
-            body: data[8]
+            functionName: data[2],
+            parameters: data[6],
+            body: data[10]
         })
     %}
     
@@ -75,7 +77,7 @@ codeBlock
         %}
 
 codeBlockWParameters
-    -> "[" _ "\n" statements "\n" _ "]"
+    -> "{" _ "\n" statements "\n" _ "}"
         {%
             (data) => ({
                 type: "codeBlock",

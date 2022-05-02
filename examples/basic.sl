@@ -1,4 +1,5 @@
-first := 123
-next := { 1 2 3 }
+method sador(s) {
+    print("Sador to" s)
+}
 
-print(first next)
+sador("szef")

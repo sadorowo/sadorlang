@@ -3,7 +3,7 @@
 (function () {
 function id(x) { return x[0]; }
 
-const customLexer = require("../lexer/lexer");
+    const customLexer = require("../lexer/lexer");
 var grammar = {
     Lexer: customLexer,
     ParserRules: [
@@ -14,7 +14,7 @@ var grammar = {
         })
                 },
     {"name": "statements", "symbols": [], "postprocess": 
-        () =>[]
+        () => []
                 },
     {"name": "statements", "symbols": ["_", "statement", "_"], "postprocess": 
         (data) => [data[1]]
@@ -24,10 +24,12 @@ var grammar = {
     {"name": "statements", "symbols": ["_", "statement", "_", "statements$ebnf$1", "statements"], "postprocess": 
         (data) => [data[1], ...data[4]]
                 },
+    {"name": "statements", "symbols": ["_", (customLexer.has("comment") ? {type: "comment"} : comment), "_"]},
     {"name": "statement", "symbols": ["assignment"], "postprocess": id},
     {"name": "statement", "symbols": ["functionCall"], "postprocess": id},
     {"name": "statement", "symbols": ["functionDefinition"], "postprocess": id},
     {"name": "statement", "symbols": ["ifStatement"], "postprocess": id},
+    {"name": "statement", "symbols": [(customLexer.has("comment") ? {type: "comment"} : comment)], "postprocess": id},
     {"name": "statement", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier)], "postprocess": id},
     {"name": "assignment", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":":="}, "_", "expression"], "postprocess": 
         (data) => ({
@@ -43,12 +45,12 @@ var grammar = {
             parameters: data[4]
         })
             },
-    {"name": "functionDefinition", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_", "expressionList", "_", {"literal":")"}, "_", "codeBlockWParameters"], "postprocess": 
+    {"name": "functionDefinition", "symbols": [{"literal":"method"}, "_", (customLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_", "expressionList", "_", {"literal":")"}, "_", "codeBlockWParameters"], "postprocess": 
         (data) => ({
             type: "functionDefinition",
-            functionName: data[0],
-            parameters: data[4],
-            body: data[8]
+            functionName: data[2],
+            parameters: data[6],
+            body: data[10]
         })
             },
     {"name": "codeBlock", "symbols": ["codeBlockWParameters"], "postprocess": id},
@@ -59,7 +61,7 @@ var grammar = {
             statements: data[5]
         })
                 },
-    {"name": "codeBlockWParameters", "symbols": [{"literal":"["}, "_", {"literal":"\n"}, "statements", {"literal":"\n"}, "_", {"literal":"]"}], "postprocess": 
+    {"name": "codeBlockWParameters", "symbols": [{"literal":"{"}, "_", {"literal":"\n"}, "statements", {"literal":"\n"}, "_", {"literal":"}"}], "postprocess": 
         (data) => ({
             type: "codeBlock",
             statements: data[3]

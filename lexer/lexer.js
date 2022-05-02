@@ -1,8 +1,8 @@
-const Failure = require('../runtime/failure');
 const moo = require('moo');
 
 module.exports = moo.compile({
 	whitespace: /[ \t]+/,
+	comment: /\/\/.*/,
 	number: { match: /0|[1-9][0-9]*/, value: Number },
 	string: /"(?:\\["\\]|[^\n"\\])*"/,
 	regex: /\/(?:\\["\\]|[^\/])*\//,
@@ -19,5 +19,5 @@ module.exports = moo.compile({
 	color: ':',
 	identifier: /[a-zA-Z_][a-zA-Z0-9_]*/,
 	newline: { match: /\n/, lineBreaks: true },
-	error: moo.error
+	any: { match: /[^ ]/, lineBreaks: true }
 });

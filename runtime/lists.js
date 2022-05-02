@@ -25,3 +25,7 @@ function filter(arr, fun) {
 function reduce(arr, fun, initValue) {
     return arr.reduce(fun, initValue);
 }
+
+function entries(map) {
+    return Array.from(map.entries());
+}

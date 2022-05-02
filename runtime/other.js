@@ -6,3 +6,7 @@ function _if(c, then, _else) {
     if (c) return then();
     else return _else();
 }
+
+function print(...text) {
+    return console.log(...text)
+}
