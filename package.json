@@ -1,0 +1,22 @@
+{
+  "name": "sadorlang",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"OK\"",
+    "parse": "nearleyc .\\parser\\grammar.ne -o .\\parser\\grammar.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "fs": "^0.0.1-security",
+    "moo": "^0.5.1",
+    "mz": "^2.7.0"
+  },
+  "devDependencies": {
+    "nearley": "^2.20.1"
+  }
+}
