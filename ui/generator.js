@@ -22,11 +22,9 @@ function generateFunction(statements, parameters, name = '') {
 		statements
 			.map((statement, idx) => {
 				const js = generate(statement);
-				if (idx === statements.length - 1) {
-					return `return ${js}`;
-				} else {
-					return js;
-				}
+				if (idx === statements.length - 1) 
+				return (['var', 'return'].some((v) => js.startsWith(v) || js === v) && js ? js : `return ${js}`);
+				else return js;
 			})
 			.join(';\n') + ';';
 

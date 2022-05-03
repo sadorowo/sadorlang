@@ -93,7 +93,7 @@ var grammar = {
             throw new Error("Tagged sequence as dict");
         
             return {
-                type: tag + "_literal",
+                type: tag + "Literal",
                 items: data[3]
             }
         }
@@ -133,7 +133,7 @@ var grammar = {
                 },
     {"name": "optionalTag", "symbols": [], "postprocess": () => null},
     {"name": "optionalTag", "symbols": ["tag"], "postprocess": id},
-    {"name": "tag", "symbols": [{"literal":"<"}, "tagName", {"literal":">"}], "postprocess": 
+    {"name": "tag", "symbols": [{"literal":"{"}, "tagName", {"literal":"}"}], "postprocess": 
         (data) => data[1].value
             },
     {"name": "tagName", "symbols": [{"literal":"array"}], "postprocess": id},

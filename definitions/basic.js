@@ -1,5 +1,4 @@
 const { runtime, generate } = require('../ui/generator');
-const Failure = require('../runtime/failure');
 
 module.exports = function (node) {
     switch (node.type) {

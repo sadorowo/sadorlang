@@ -1,7 +1,7 @@
-age := 22
+age := 15
 
-if gt(age 18) {
-    print("możesz pić wódkę!")
-} else {
-    print("nie możesz pić wódki!")
+if or(gt(age 18) eq(age 18)) { 
+    print("Możesz pić wódę")
+} else { 
+    print("Nie możesz pić wódy") 
 }

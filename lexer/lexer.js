@@ -16,7 +16,7 @@ module.exports = moo.compile({
 	bar: '|',
 	less_than: '<',
 	greater_than: '>',
-	color: ':',
+	kvpair: ':',
 	identifier: /[a-zA-Z_][a-zA-Z0-9_]*/,
 	newline: { match: /\n/, lineBreaks: true },
 	any: { match: /[^ ]/, lineBreaks: true }

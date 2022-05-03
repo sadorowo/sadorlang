@@ -23,6 +23,7 @@ module.exports = function (node) {
 					const [key, value] = entry;
 					const keyExpression = generate(key);
 					const valueExpression = generate(value);
+
 					return `['${keyExpression}', '${valueExpression}']`;
 				})
 				.join(', ');

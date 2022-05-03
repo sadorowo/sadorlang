@@ -124,7 +124,7 @@ seqLiteral
                 throw new Error("Tagged sequence as dict");
 
                 return {
-                    type: tag + "_literal",
+                    type: tag + "Literal",
                     items: data[3]
                 }
             }
@@ -181,7 +181,7 @@ optionalTag
     |  tag  {% id %}
 
 tag ->
-    "<" tagName ">"
+    "{" tagName "}"
     {%
         (data) => data[1].value
     %}
