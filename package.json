@@ -3,28 +3,20 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
   "scripts": {
-    "test": "echo \"OK\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sadordev/sadorlang.git"
+    "test": "echo \"OK\"",
+    "parse": "nearleyc .\\parser\\grammar.ne -o .\\parser\\grammar.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/sadordev/sadorlang/issues"
-  },
-  "homepage": "https://github.com/sadordev/sadorlang#readme",
   "dependencies": {
-    "@types/node": "^17.0.23",
     "colors": "^1.4.0",
     "fs": "^0.0.1-security",
-    "node-fetch": "^3.2.3",
-    "path": "^0.12.7"
+    "moo": "^0.5.1",
+    "mz": "^2.7.0"
+  },
+  "devDependencies": {
+    "nearley": "^2.20.1"
   }
 }
