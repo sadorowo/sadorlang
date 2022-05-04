@@ -7,10 +7,6 @@ function _if(c, then, _else) {
     else return _else();
 }
 
-function print(...text) {
-    return console.log(...text)
-}
-
 function all(...statements) {
     return !statements.some((s) => !s)
 }
@@ -27,4 +23,20 @@ function replAll(str, kvp) {
     console.log(kvp)
     Array.from(kvp.entries()).forEach(([k, v]) => { str = str.replaceAll(k, v) })
     return str
+}
+
+function fmt(str, ...variables) {
+    for (const index in variables) {
+        str = str.replace(`$${index}`, variables[index])
+    }
+
+    return str
+}
+
+function printf(str, ...variables) {
+    return console.log(fmt(str, ...variables))
+}
+
+function print(...text) {
+    return console.log(...text)
 }

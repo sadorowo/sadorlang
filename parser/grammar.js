@@ -26,6 +26,7 @@ var grammar = {
                 },
     {"name": "statements", "symbols": ["_", (customLexer.has("comment") ? {type: "comment"} : comment), "_"]},
     {"name": "statement", "symbols": ["assignment"], "postprocess": id},
+    {"name": "statement", "symbols": ["overwriteAssignment"], "postprocess": id},
     {"name": "statement", "symbols": ["functionCall"], "postprocess": id},
     {"name": "statement", "symbols": ["functionDefinition"], "postprocess": id},
     {"name": "statement", "symbols": ["ifStatement"], "postprocess": id},
@@ -36,6 +37,13 @@ var grammar = {
             type: "assignment",
             variableName: data[0],
             value: data[4]
+        })
+            },
+    {"name": "overwriteAssignment", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":">"}, "_", "expression"], "postprocess": 
+        (data) => ({
+            type: "overwriteAssignment",
+            variableName: data[0],
+            newValue: data[4]
         })
             },
     {"name": "functionCall", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_", "expressionList", "_", {"literal":")"}], "postprocess": 

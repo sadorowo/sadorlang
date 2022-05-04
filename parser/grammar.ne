@@ -30,6 +30,7 @@ statements
 
 statement
     -> assignment          {% id %}
+    |  overwriteAssignment {% id %}
     |  functionCall        {% id %}
     |  functionDefinition  {% id %}
     |  ifStatement         {% id %}
@@ -42,6 +43,15 @@ assignment -> %identifier _ ":=" _ expression
             type: "assignment",
             variableName: data[0],
             value: data[4]
+        })
+    %}
+
+overwriteAssignment -> %identifier _ ">" _ expression
+    {%
+        (data) => ({
+            type: "overwriteAssignment",
+            variableName: data[0],
+            newValue: data[4]
         })
     %}
 

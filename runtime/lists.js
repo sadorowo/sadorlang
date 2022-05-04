@@ -29,3 +29,17 @@ function reduce(arr, fun, initValue) {
 function entries(map) {
     return Array.from(map.entries());
 }
+
+function concat(...arrays) {
+    return new Array().concat(...arrays)
+}
+
+function incl(array, item) {
+    return array.indexOf(item) !== -1
+}
+
+function shuffle(array) {
+    return array.map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value)
+}
