@@ -20,7 +20,6 @@ function repl(str, from, to) {
 }
 
 function replAll(str, kvp) {
-    console.log(kvp)
     Array.from(kvp.entries()).forEach(([k, v]) => { str = str.replaceAll(k, v) })
     return str
 }
@@ -34,9 +33,9 @@ function fmt(str, ...variables) {
 }
 
 function printf(str, ...variables) {
-    return console.log(fmt(str, ...variables))
+    return console.log(fmt(str, ...variables).replaceAll('\\n', '\n'))
 }
 
 function print(...text) {
-    return console.log(...text)
+    return console.log(...text.map((v) => v.replaceAll('\\n', '\n')))
 }
