@@ -27,7 +27,9 @@ function DownloadRepo($scriptPath)
     Remove-Item -Path $file -Force
 
     [string]$dirname = (Get-ChildItem $location *sadorlang* -Recurse -Directory).Name
-    $env:Path += ";$scriptPath\$dirname"
+    [string]$oldPath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
+    
+    Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value "$oldPath;$scriptPath\$dirname"
 }
 
 if (-not (CheckCommand -name 'node') -or -not (CheckCommand -name 'npm')) {
