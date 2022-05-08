@@ -9,9 +9,9 @@ module.exports.generate = generate;
 module.exports.indent = indent;
 
 function generate(node) {
-    for (const functionCheck of readdirSync(join(__dirname, '..', 'definitions'))
-	.map((v) => require(join(__dirname, '..', 'definitions', v))))
-	{
+	for (const functionCheck of readdirSync(
+		join(__dirname, '..', 'definitions')
+	).map((v) => require(join(__dirname, '..', 'definitions', v)))) {
 		const value = functionCheck(node);
 		if (value) return value;
 	}
@@ -22,8 +22,12 @@ function generateFunction(statements, parameters, name = '') {
 		statements
 			.map((statement, idx) => {
 				const js = generate(statement);
-				if (idx === statements.length - 1) 
-				return (['var', 'return'].some((v) => js.startsWith(v) || js === v) && js ? js : `return ${js}`);
+				if (idx === statements.length - 1)
+					return ['var', 'return'].some(
+						(v) => js.startsWith(v) || js === v
+					) && js
+						? js
+						: `return ${js}`;
 				else return js;
 			})
 			.join(';\n') + ';';
@@ -40,14 +44,25 @@ function indent(string) {
 		.join('\n');
 }
 
-const filename = process.argv[2];
-if (!filename) throw new Failure('provide filename');
+function main(name) {
+	const filename = name || process.argv[2];
+	if (!filename) throw new Failure('provide filename');
 
-const astCode = JSON.parse(readFileSync(join(process.cwd(), filename)).toString());
-const generatedCode = generate(astCode);
-const baseDirectory = dirname(filename);
-const baseFileName = basename(filename, '.sl.ast');
-const convertedFilename = join(baseDirectory, baseFileName + '.js');
+	const astCode = JSON.parse(
+		readFileSync(join(process.cwd(), filename)).toString()
+	);
+	const generatedCode = generate(astCode);
+	const baseDirectory = dirname(filename);
+	const baseFileName = basename(filename, '.sl.ast');
+	const convertedFilename = join(baseDirectory, baseFileName + '.js');
 
-writeFileSync(convertedFilename, generatedCode.replace(/function if\(/g, 'if('));
-console.log(`${'[INFO]'.green} wrote ${convertedFilename} successfully`);
+	writeFileSync(
+		convertedFilename,
+		generatedCode.replace(/function if\(/g, 'if(')
+	);
+	console.log(`${'[INFO]'.green} wrote ${convertedFilename} successfully`);
+}
+
+if (!process.argv[2]) main()
+
+module.exports.main = main

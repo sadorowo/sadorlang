@@ -14,6 +14,10 @@ function sqrt(x) {
     return Math.sqrt(x);
 }
 
+function sm(x, y) {
+    return x < y;
+}
+
 function gt(x, y) {
     return x > y;
 }

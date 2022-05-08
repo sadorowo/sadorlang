@@ -1,5 +1,5 @@
 method sador(s) {
-    print("Sador to" s)
+    printf("Sador to $0" s)
 }
 
 sador("szef")

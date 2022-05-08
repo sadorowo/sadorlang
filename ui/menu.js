@@ -15,18 +15,17 @@ switch (option) {
 	case 'run':
 	case 'exec': {
 		require('./compiler')(code);
-		exec(`node ${join(__dirname, 'generator.js')} ${path}.ast`, (...a) => {
-			const baseDir = dirname(path);
-			const jsFilename = join(baseDir, basename(path, '.sl') + '.js');
+		require('../ui/generator').main(path + '.ast');
+		const baseDir = dirname(path);
+		const jsFilename = join(baseDir, basename(path, '.sl') + '.js');
 
-			exec(`node ${jsFilename}`, (_, stdout, stderr) => {
-				if (stderr) throw new Failure(stderr);
+		exec(`node ${jsFilename}`, (_, stdout, stderr) => {
+			if (stderr) throw new Failure(stderr);
 
-				console.log(stdout);
+			console.log(stdout);
 
-				rmSync(jsFilename);
-				rmSync(jsFilename.replace('.js', '.sl.ast'));
-			});
+			rmSync(jsFilename);
+			rmSync(jsFilename.replace('.js', '.sl.ast'));
 		});
 		break;
 	}

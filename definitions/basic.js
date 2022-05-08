@@ -8,12 +8,14 @@ module.exports = function (node) {
         case 'assignment': {
             const varName = node.variableName.value;
 	    	const value = generate(node.value);
+
 		    return `var ${varName} = ${value}`;
         }
 
         case 'overwriteAssignment': {
             const varName = node.variableName.value;
 	    	const newValue = generate(node.newValue);
+
 		    return `${varName} = ${newValue}`;
         }
 
