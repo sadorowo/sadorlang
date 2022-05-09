@@ -14,7 +14,7 @@ function DownloadRepo($scriptPath)
     $file = "$location\$name.zip"
     New-Item $file -ItemType File -Force
  
-    $repoUrl = "https://api.github.com/repos/vernehere/sadorlang/zipball/main"
+    $repoUrl = "https://api.github.com/repos/sadorowo/sadorlang/zipball/main"
     Write-Progress -Activity "Downloading GitHub repository..." -Status "0% Complete:" -PercentComplete 0
     Invoke-RestMethod -Uri $repoUrl -OutFile $file
     Write-Progress -Activity "Downloading GitHub repository..." -Status "100% Complete:" -PercentComplete 100
