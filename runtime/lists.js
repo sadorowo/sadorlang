@@ -39,7 +39,11 @@ function incl(array, item) {
 }
 
 function shuffle(array) {
-    return array.map(value => ({ value, sort: Math.random() }))
+    return array.map((value) => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value)
+}
+
+function random(array) {
+    return array[Math.floor(Math.random() * array.length)]
 }

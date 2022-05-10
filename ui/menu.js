@@ -40,6 +40,21 @@ switch (option) {
 		break;
 	}
 
+	case 'info':
+	case 'sys':
+	case 'informations':
+	case 'data': {
+		break;
+	}
+
+	case 'lexer':
+	case 'lexer-test': {
+		console.log(`${'[IMPORTANT]'.red} you should see something similar to this: [{...}, {...}, {...}] (... - anyting)`)
+		console.log(`${'[IMPORTANT]'.red} result: ${JSON.stringify(require('../tests/lexer_test').run())
+		.split(',').map((s) => s.green).join(',')}`)
+		break;
+	}
+
 	default:
 		console.log(
 			`
@@ -47,6 +62,7 @@ switch (option) {
 
 			${'[run|r|exec]'.yellow} run program
 			${'[comp|c|com|compile]'.yellow} compile program
+			${'[lexer|lexer-test]'.yellow} text lexer
 			${'[info|sys|informations|data]'.yellow} informations about SadorLang scripter
 		`.replace(/	/g, '')
 		);

@@ -4,9 +4,15 @@ const lexer = require('../lexer/lexer');
 
 const code = readFileSync(join(__dirname, '..', 'examples', 'basic.sl'));
 
-lexer.reset(code.toString());
-while (true) {
-	const actualToken = lexer.next();
-	if (actualToken) console.log('FOUND TOKEN:', actualToken);
-	else break;
-}
+module.exports.run = function () {
+	const tokens = [];
+
+	lexer.reset(code.toString());
+	while (true) {
+		const actualToken = lexer.next();
+		if (actualToken) tokens.push(actualToken);
+		else break;
+	};
+
+	return tokens;
+};

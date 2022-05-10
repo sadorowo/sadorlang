@@ -19,6 +19,10 @@ module.exports = function (node) {
 		    return `${varName} = ${newValue}`;
         }
 
+        case 'returnStatement': {
+            return `return ${generate(node.returned)}`
+        }
+
         case 'functionCall': {
             const sourceFunctionName = node.functionName.value;
 	    	const functionName = sourceFunctionName === 'if' ? '_if' : sourceFunctionName;

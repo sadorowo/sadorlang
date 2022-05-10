@@ -29,7 +29,8 @@ statements
     |  _ %comment _
 
 statement
-    -> assignment          {% id %}
+    -> returnStatement     {% id %}
+    |  assignment          {% id %}
     |  overwriteAssignment {% id %}
     |  functionCall        {% id %}
     |  functionDefinition  {% id %}
@@ -52,6 +53,14 @@ overwriteAssignment -> %identifier _ ">" _ expression
             type: "overwriteAssignment",
             variableName: data[0],
             newValue: data[4]
+        })
+    %}
+
+returnStatement -> "return" _ expression
+    {%
+        (data) => ({
+            type: "returnStatement",
+            returned: data[2]
         })
     %}
 
