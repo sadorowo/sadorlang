@@ -4,8 +4,13 @@ const { exec } = require('child_process');
 const Failure = require('../runtime/failure');
 require('colors');
 
-const option = process.argv[2];
-const path = process.argv[3];
+const notFlag = (f) => !f.startsWith('-');
+const isFlag = (a) => !notFlag(a);
+
+const options = process.argv.filter(notFlag);
+const flags = process.argv.filter(isFlag).map((v) => v.slice(1));
+const option = options[2];
+const path = options[3];
 const code = path
 	? readFileSync(join(process.cwd(), path)).toString().replace(/\r\n/g, '\n')
 	: null;
@@ -14,8 +19,8 @@ switch (option) {
 	case 'r':
 	case 'run':
 	case 'exec': {
-		require('./compiler')(code);
-		require('../ui/generator').main(path + '.ast');
+		require('./compiler')(options, code);
+		require('../ui/generator').main(options, path + '.json');
 		const baseDir = dirname(path);
 		const jsFilename = join(baseDir, basename(path, '.sl') + '.js');
 
@@ -25,7 +30,7 @@ switch (option) {
 			console.log(stdout);
 
 			rmSync(jsFilename);
-			rmSync(jsFilename.replace('.js', '.sl.ast'));
+			rmSync(jsFilename.replace('.js', '.sl.json'));
 		});
 		break;
 	}
@@ -34,9 +39,9 @@ switch (option) {
 	case 'com':
 	case 'comp':
 	case 'compile': {
-		require('./compiler')(code);
+		require('./compiler')(options, code);
 
-		console.log(`${'[INFO]'.green} compiled code successfully`);
+		if (!flags.includes('s')) console.log(`${'[INFO]'.green} compiled code successfully`);
 		break;
 	}
 
@@ -44,19 +49,27 @@ switch (option) {
 	case 'sys':
 	case 'informations':
 	case 'data': {
+		if (!flags.includes('s')) console.log(
+			`
+			SadorLang scripter ${`[v${require('../package.json').version}]`.yellow}
+
+			built using Moo & Nearley
+			author: ${require('../package.json').author}
+		`.replace(/	/g, '')
+		);
 		break;
 	}
 
 	case 'lexer':
 	case 'lexer-test': {
-		console.log(`${'[IMPORTANT]'.red} you should see something similar to this: [{...}, {...}, {...}] (... - anyting)`)
-		console.log(`${'[IMPORTANT]'.red} result: ${JSON.stringify(require('../tests/lexer_test').run())
+		if (!flags.includes('s')) console.log(`${'[IMPORTANT]'.red} you should see something similar to this: [{...}, {...}, {...}] (... - anyting)`)
+		if (!flags.includes('s')) console.log(`${'[IMPORTANT]'.red} result: ${JSON.stringify(require('../tests/lexer_test').run())
 		.split(',').map((s) => s.green).join(',')}`)
 		break;
 	}
 
 	default:
-		console.log(
+		if (!flags.includes('s')) console.log(
 			`
 			SadorLang helper
 

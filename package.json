@@ -1,14 +1,13 @@
 {
   "name": "sadorlang",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "SadorLang files",
   "scripts": {
     "test": "echo \"OK\"",
     "parse": "nearleyc .\\parser\\grammar.ne -o .\\parser\\grammar.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Sador",
   "license": "ISC",
   "dependencies": {
     "colors": "^1.4.0",

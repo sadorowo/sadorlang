@@ -44,8 +44,8 @@ function indent(string) {
 		.join('\n');
 }
 
-function main(name) {
-	const filename = name || process.argv[2];
+function main(options, name) {
+	const filename = name || options[2];
 	if (!filename) throw new Failure('provide filename');
 
 	const astCode = JSON.parse(
@@ -53,7 +53,7 @@ function main(name) {
 	);
 	const generatedCode = generate(astCode);
 	const baseDirectory = dirname(filename);
-	const baseFileName = basename(filename, '.sl.ast');
+	const baseFileName = basename(filename, '.sl.json');
 	const convertedFilename = join(baseDirectory, baseFileName + '.js');
 
 	writeFileSync(
@@ -62,7 +62,5 @@ function main(name) {
 	);
 	console.log(`${'[INFO]'.green} wrote ${convertedFilename} successfully`);
 }
-
-if (!process.argv[2]) main()
 
 module.exports.main = main

@@ -7,9 +7,9 @@ function id(x) { return x[0]; }
 var grammar = {
     Lexer: customLexer,
     ParserRules: [
-    {"name": "program", "symbols": ["statements"], "postprocess": 
+    {"name": "compiled", "symbols": ["statements"], "postprocess": 
         (data) => ({
-            type: "program",
+            type: "compiled",
             body: data[0]
         })
                 },
@@ -170,7 +170,7 @@ var grammar = {
     {"name": "_", "symbols": ["__"]},
     {"name": "__", "symbols": [(customLexer.has("whitespace") ? {type: "whitespace"} : whitespace)]}
 ]
-  , ParserStart: "program"
+  , ParserStart: "compiled"
 }
 if (typeof module !== 'undefined'&& typeof module.exports !== 'undefined') {
    module.exports = grammar;

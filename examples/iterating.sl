@@ -1,5 +1,5 @@
 imionaMeskie := { "Franek" "Kamil" "Mateusz" "Tomek" "Karol" }
-imionaZenskie := { "Magda" "Wiktoria" "Karolina" "Ania" }
+imionaZenskie := { "Wiktoria" "Karolina" "Ania" }
 
 imiona := shuffle(concat(imionaMeskie imionaZenskie))
 method jakieImie(imie) {
@@ -10,7 +10,7 @@ method jakieImie(imie) {
     }
 }
 
-each(imiona {|imie|
+each(imiona { |imie|
     typImienia := jakieImie(imie)
 
     printf("$0 to imię $1" imie typImienia)

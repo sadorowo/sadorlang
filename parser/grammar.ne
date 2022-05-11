@@ -4,11 +4,11 @@
 
 @lexer customLexer
 
-program
+compiled
     -> statements
         {%
             (data) => ({
-                type: "program",
+                type: "compiled",
                 body: data[0]
             })
         %}

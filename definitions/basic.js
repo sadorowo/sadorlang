@@ -2,7 +2,7 @@ const { runtime, generate } = require('../ui/generator');
 
 module.exports = function (node) {
     switch (node.type) {
-        case 'program': 
+        case 'compiled': 
         return node.body.map(generate).join(';\n') + ';\n' + runtime;
 
         case 'assignment': {
