@@ -2,12 +2,12 @@
 
 1. Install NodeJS
 2. Install
-```cmd
+```powershell
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/sadorowo/sadorlang/main/installer.ps1'))
 ```
 
 3. Run
-```cmd
+```s
 .\sl run <file>
 ```
 
