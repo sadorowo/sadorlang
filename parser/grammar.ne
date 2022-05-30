@@ -31,12 +31,22 @@ statements
 statement
     -> returnStatement     {% id %}
     |  assignment          {% id %}
+    |  constAssignment     {% id %}
     |  overwriteAssignment {% id %}
     |  functionCall        {% id %}
     |  functionDefinition  {% id %}
     |  ifStatement         {% id %}
     |  %comment            {% id %}
     |  %identifier         {% id %}
+
+constAssignment -> %identifier "!" _ ":=" _ expression
+    {%
+        (data) => ({
+            type: "constAssignment",
+            variableName: data[0],
+            value: data[5]
+        })
+    %}
 
 assignment -> %identifier _ ":=" _ expression
     {%
@@ -105,7 +115,7 @@ codeBlockWParameters
         %}
 
 codeBlockParameters
-    -> "|" _ expressionList _ "|"
+    -> "|" _ expressionList _ "|" _ "->"
         {%
             (data) => data[2]
         %}
@@ -115,42 +125,42 @@ expressionList
         {%
             (data) => [data[0]]
         %}
-    |  expression __ expressionList
+    |  expression "," expressionList
         {%
             (data) => [data[0], ...data[2]]
         %}
 
 expression
-    -> %identifier    {% id %}
-    |  literal        {% id %}
+    -> %identifier   {% id %}
+    |  literal       {% id %}
     |  functionCall  {% id %}
     |  codeBlock     {% id %}
 
 literal
-    -> %number                   {% id %}
-    |  %string                   {% id %}
-    |  emptyCollectionLiteral  {% id %}
-    |  seqLiteral          {% id %}
-    |  dictLiteral        {% id %}
-    |  %regex                    {% id %}
+    -> %number                  {% id %}
+    |  %string                  {% id %}
+    |  emptyCollectionLiteral   {% id %}
+    |  seqLiteral               {% id %}
+    |  dictLiteral              {% id %}
+    |  %regex                   {% id %}
 
 seqLiteral
-    -> optionalTag "{" _ expressionList _ "}"
+    -> "{" _ expressionList _ "}" optionalTag
         {%
             (data) => {
                 const tag = data[0] || "array";
                 if (tag === "dict")
-                throw new Error("Tagged sequence as dict");
+                throw new Error("cannot convert sequence to dict");
 
                 return {
-                    type: tag + "Literal",
+                    type: `${tag}Literal`,
                     items: data[3]
                 }
             }
         %}
 
 emptyCollectionLiteral
-    -> optionalTag "{" _ "}"
+    -> "{" _ "}" optionalTag
         {%
             (data) => {
                 const tag = data[0] || "array";
@@ -165,7 +175,7 @@ emptyCollectionLiteral
         %}
 
 dictLiteral
-    -> optionalTag "{" _ kvPairList _ "}"
+    -> "{" _ kvPairList _ "}" optionalTag
         {%
             (data) => {
                 const tag = data[0] || "dict";
@@ -200,9 +210,9 @@ optionalTag
     |  tag  {% id %}
 
 tag ->
-    "{" tagName "}"
+    "as" _ tagName
     {%
-        (data) => data[1].value
+        (data) => data[2].value
     %}
 
 tagName

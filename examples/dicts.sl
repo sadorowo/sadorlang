@@ -1,8 +1,8 @@
-dict := <dict>{ sador: king }
+dict := { sador: king } as dict
 
-each(entries(dict) { |item|
-    key := at(item 0)
-    val := at(item 1)
+each(entries(dict) { |item| ->
+    key := at(item, 0)
+    val := at(item, 1)
 
-    print(key "to" val)
+    print(key, "to", val)
 })

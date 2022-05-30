@@ -5,6 +5,13 @@ module.exports = function (node) {
         case 'compiled': 
         return node.body.map(generate).join(';\n') + ';\n' + runtime;
 
+        case 'constAssignment': {
+            const varName = node.variableName.value;
+	    	const value = generate(node.value);
+
+		    return `const ${varName} = ${value}`;
+        }
+
         case 'assignment': {
             const varName = node.variableName.value;
 	    	const value = generate(node.value);
