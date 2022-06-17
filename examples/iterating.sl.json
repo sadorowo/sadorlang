@@ -1,0 +1,331 @@
+{
+    "type": "compiled",
+    "body": [
+        {
+            "type": "assignment",
+            "variableName": {
+                "type": "identifier",
+                "value": "imionaMeskie",
+                "text": "imionaMeskie",
+                "offset": 0,
+                "lineBreaks": 0,
+                "line": 1,
+                "col": 1
+            },
+            "value": {
+                "type": "{Literal",
+                "items": [
+                    [
+                        {
+                            "type": "whitespace",
+                            "value": " ",
+                            "text": " ",
+                            "offset": 64,
+                            "lineBreaks": 0,
+                            "line": 1,
+                            "col": 65
+                        }
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "assignment",
+            "variableName": {
+                "type": "identifier",
+                "value": "imionaZenskie",
+                "text": "imionaZenskie",
+                "offset": 67,
+                "lineBreaks": 0,
+                "line": 2,
+                "col": 1
+            },
+            "value": {
+                "type": "{Literal",
+                "items": [
+                    [
+                        {
+                            "type": "whitespace",
+                            "value": " ",
+                            "text": " ",
+                            "offset": 116,
+                            "lineBreaks": 0,
+                            "line": 2,
+                            "col": 50
+                        }
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "assignment",
+            "variableName": {
+                "type": "identifier",
+                "value": "imiona",
+                "text": "imiona",
+                "offset": 120,
+                "lineBreaks": 0,
+                "line": 4,
+                "col": 1
+            },
+            "value": {
+                "type": "functionCall",
+                "functionName": {
+                    "type": "identifier",
+                    "value": "shuffle",
+                    "text": "shuffle",
+                    "offset": 130,
+                    "lineBreaks": 0,
+                    "line": 4,
+                    "col": 11
+                },
+                "parameters": [
+                    {
+                        "type": "functionCall",
+                        "functionName": {
+                            "type": "identifier",
+                            "value": "concat",
+                            "text": "concat",
+                            "offset": 138,
+                            "lineBreaks": 0,
+                            "line": 4,
+                            "col": 19
+                        },
+                        "parameters": [
+                            {
+                                "type": "identifier",
+                                "value": "imionaMeskie",
+                                "text": "imionaMeskie",
+                                "offset": 145,
+                                "lineBreaks": 0,
+                                "line": 4,
+                                "col": 26
+                            },
+                            {
+                                "type": "identifier",
+                                "value": "imionaZenskie",
+                                "text": "imionaZenskie",
+                                "offset": 159,
+                                "lineBreaks": 0,
+                                "line": 4,
+                                "col": 40
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "type": "functionDefinition",
+            "functionName": {
+                "type": "identifier",
+                "value": "jakieImie",
+                "text": "jakieImie",
+                "offset": 182,
+                "lineBreaks": 0,
+                "line": 5,
+                "col": 8
+            },
+            "parameters": [
+                {
+                    "type": "identifier",
+                    "value": "imie",
+                    "text": "imie",
+                    "offset": 192,
+                    "lineBreaks": 0,
+                    "line": 5,
+                    "col": 18
+                }
+            ],
+            "body": {
+                "type": "codeBlock",
+                "statements": [
+                    {
+                        "type": "ifStatement",
+                        "conditional": {
+                            "type": "functionCall",
+                            "functionName": {
+                                "type": "identifier",
+                                "value": "incl",
+                                "text": "incl",
+                                "offset": 207,
+                                "lineBreaks": 0,
+                                "line": 6,
+                                "col": 8
+                            },
+                            "parameters": [
+                                {
+                                    "type": "identifier",
+                                    "value": "imionaMeskie",
+                                    "text": "imionaMeskie",
+                                    "offset": 212,
+                                    "lineBreaks": 0,
+                                    "line": 6,
+                                    "col": 13
+                                },
+                                {
+                                    "type": "identifier",
+                                    "value": "imie",
+                                    "text": "imie",
+                                    "offset": 226,
+                                    "lineBreaks": 0,
+                                    "line": 6,
+                                    "col": 27
+                                }
+                            ]
+                        },
+                        "consequent": {
+                            "type": "codeBlock",
+                            "statements": [
+                                {
+                                    "type": "returnStatement",
+                                    "returned": {
+                                        "type": "string",
+                                        "value": "\"męskie\"",
+                                        "text": "\"męskie\"",
+                                        "offset": 249,
+                                        "lineBreaks": 0,
+                                        "line": 7,
+                                        "col": 16
+                                    }
+                                }
+                            ]
+                        },
+                        "alternate": {
+                            "type": "codeBlock",
+                            "statements": [
+                                {
+                                    "type": "returnStatement",
+                                    "returned": {
+                                        "type": "string",
+                                        "value": "\"żeńskie\"",
+                                        "text": "\"żeńskie\"",
+                                        "offset": 286,
+                                        "lineBreaks": 0,
+                                        "line": 9,
+                                        "col": 16
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "functionCall",
+            "functionName": {
+                "type": "identifier",
+                "value": "each",
+                "text": "each",
+                "offset": 305,
+                "lineBreaks": 0,
+                "line": 13,
+                "col": 1
+            },
+            "parameters": [
+                {
+                    "type": "identifier",
+                    "value": "imiona",
+                    "text": "imiona",
+                    "offset": 310,
+                    "lineBreaks": 0,
+                    "line": 13,
+                    "col": 6
+                },
+                {
+                    "type": "codeBlock",
+                    "parameters": [
+                        {
+                            "type": "identifier",
+                            "value": "imie",
+                            "text": "imie",
+                            "offset": 321,
+                            "lineBreaks": 0,
+                            "line": 13,
+                            "col": 17
+                        }
+                    ],
+                    "statements": [
+                        {
+                            "type": "assignment",
+                            "variableName": {
+                                "type": "identifier",
+                                "value": "typImienia",
+                                "text": "typImienia",
+                                "offset": 333,
+                                "lineBreaks": 0,
+                                "line": 14,
+                                "col": 5
+                            },
+                            "value": {
+                                "type": "functionCall",
+                                "functionName": {
+                                    "type": "identifier",
+                                    "value": "jakieImie",
+                                    "text": "jakieImie",
+                                    "offset": 347,
+                                    "lineBreaks": 0,
+                                    "line": 14,
+                                    "col": 19
+                                },
+                                "parameters": [
+                                    {
+                                        "type": "identifier",
+                                        "value": "imie",
+                                        "text": "imie",
+                                        "offset": 357,
+                                        "lineBreaks": 0,
+                                        "line": 14,
+                                        "col": 29
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "type": "functionCall",
+                            "functionName": {
+                                "type": "identifier",
+                                "value": "printf",
+                                "text": "printf",
+                                "offset": 368,
+                                "lineBreaks": 0,
+                                "line": 16,
+                                "col": 5
+                            },
+                            "parameters": [
+                                {
+                                    "type": "string",
+                                    "value": "\"$0 to imię $1\"",
+                                    "text": "\"$0 to imię $1\"",
+                                    "offset": 375,
+                                    "lineBreaks": 0,
+                                    "line": 16,
+                                    "col": 12
+                                },
+                                {
+                                    "type": "identifier",
+                                    "value": "imie",
+                                    "text": "imie",
+                                    "offset": 392,
+                                    "lineBreaks": 0,
+                                    "line": 16,
+                                    "col": 29
+                                },
+                                {
+                                    "type": "identifier",
+                                    "value": "typImienia",
+                                    "text": "typImienia",
+                                    "offset": 398,
+                                    "lineBreaks": 0,
+                                    "line": 16,
+                                    "col": 35
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
