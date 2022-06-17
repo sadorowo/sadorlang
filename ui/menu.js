@@ -24,13 +24,13 @@ switch (option) {
 		const baseDir = dirname(path);
 		const jsFilename = join(baseDir, basename(path, '.sl') + '.js');
 
-		exec(`node ${jsFilename}`, (_, stdout, stderr) => {
-			if (stderr) throw new Failure(stderr);
+		exec(`node ${jsFilename}`, (error, stdout) => {
+			if (!flags.includes('nr')) rmSync(jsFilename);
+			if (!flags.includes('nr')) rmSync(jsFilename.replace('.js', '.sl.json'));
+
+			if (error) throw error;
 
 			console.log(stdout);
-
-			rmSync(jsFilename);
-			rmSync(jsFilename.replace('.js', '.sl.json'));
 		});
 		break;
 	}

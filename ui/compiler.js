@@ -12,7 +12,7 @@ module.exports = function compile(options, code) {
 	if (parser.results.length > 1) {
 		for (let i = 0; i < parser.results.length; i++) {
 			const ast = parser.results[i];
-			const filename = join(mainDirectory, basename(options[3]) + i + '.json');
+			const filename = join(mainDirectory, basename(options[3]) + '.json');
 
 			writeFileSync(filename, JSON.stringify(ast, null, 4));
 		}

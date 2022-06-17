@@ -26,13 +26,24 @@ var grammar = {
                 },
     {"name": "statements", "symbols": ["_", (customLexer.has("comment") ? {type: "comment"} : comment), "_"]},
     {"name": "statement", "symbols": ["returnStatement"], "postprocess": id},
+    {"name": "statement", "symbols": ["boundFunctionDefinition"], "postprocess": id},
+    {"name": "statement", "symbols": ["spreadOperator"], "postprocess": id},
     {"name": "statement", "symbols": ["assignment"], "postprocess": id},
+    {"name": "statement", "symbols": ["constAssignment"], "postprocess": id},
     {"name": "statement", "symbols": ["overwriteAssignment"], "postprocess": id},
+    {"name": "statement", "symbols": ["asyncFunctionCall"], "postprocess": id},
     {"name": "statement", "symbols": ["functionCall"], "postprocess": id},
     {"name": "statement", "symbols": ["functionDefinition"], "postprocess": id},
     {"name": "statement", "symbols": ["ifStatement"], "postprocess": id},
     {"name": "statement", "symbols": [(customLexer.has("comment") ? {type: "comment"} : comment)], "postprocess": id},
     {"name": "statement", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier)], "postprocess": id},
+    {"name": "constAssignment", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier), {"literal":"!"}, "_", {"literal":":="}, "_", "expression"], "postprocess": 
+        (data) => ({
+            type: "constAssignment",
+            variableName: data[0],
+            value: data[5]
+        })
+            },
     {"name": "assignment", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":":="}, "_", "expression"], "postprocess": 
         (data) => ({
             type: "assignment",
@@ -53,6 +64,13 @@ var grammar = {
             returned: data[2]
         })
             },
+    {"name": "asyncFunctionCall", "symbols": [{"literal":"await"}, "_", (customLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_", "expressionList", "_", {"literal":")"}], "postprocess": 
+        (data) => ({
+            type: "asyncFunctionCall",
+            functionName: data[2],
+            parameters: data[6]
+        })
+            },
     {"name": "functionCall", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_", "expressionList", "_", {"literal":")"}], "postprocess": 
         (data) => ({
             type: "functionCall",
@@ -66,6 +84,14 @@ var grammar = {
             functionName: data[2],
             parameters: data[6],
             body: data[10]
+        })
+            },
+    {"name": "boundFunctionDefinition", "symbols": [{"literal":"bound"}, "_", {"literal":"method"}, "_", (customLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_", "expressionList", "_", {"literal":")"}, "_", "functionCall"], "postprocess": 
+        (data) => ({
+            type: "boundFunctionDefinition",
+            boundFunctionName: data[4],
+            boundFunctionParameters: data[8],
+            targetFunction: data[12]
         })
             },
     {"name": "codeBlock", "symbols": ["codeBlockWParameters"], "postprocess": id},
@@ -82,17 +108,19 @@ var grammar = {
             statements: data[3]
         })
                 },
-    {"name": "codeBlockParameters", "symbols": [{"literal":"|"}, "_", "expressionList", "_", {"literal":"|"}], "postprocess": 
+    {"name": "codeBlockParameters", "symbols": [{"literal":"|"}, "_", "expressionList", "_", {"literal":"|"}, "_", (customLexer.has("arrow") ? {type: "arrow"} : arrow)], "postprocess": 
         (data) => data[2]
                 },
     {"name": "expressionList", "symbols": ["expression"], "postprocess": 
         (data) => [data[0]]
                 },
-    {"name": "expressionList", "symbols": ["expression", "__", "expressionList"], "postprocess": 
-        (data) => [data[0], ...data[2]]
+    {"name": "expressionList", "symbols": ["expression", {"literal":","}, "_", "expressionList"], "postprocess": 
+        (data) => [data[0], ...data[3]]
                 },
+    {"name": "expressionList", "symbols": ["_"], "postprocess": (data) => []},
     {"name": "expression", "symbols": [(customLexer.has("identifier") ? {type: "identifier"} : identifier)], "postprocess": id},
     {"name": "expression", "symbols": ["literal"], "postprocess": id},
+    {"name": "expression", "symbols": ["asyncFunctionCall"], "postprocess": id},
     {"name": "expression", "symbols": ["functionCall"], "postprocess": id},
     {"name": "expression", "symbols": ["codeBlock"], "postprocess": id},
     {"name": "literal", "symbols": [(customLexer.has("number") ? {type: "number"} : number)], "postprocess": id},
@@ -101,21 +129,48 @@ var grammar = {
     {"name": "literal", "symbols": ["seqLiteral"], "postprocess": id},
     {"name": "literal", "symbols": ["dictLiteral"], "postprocess": id},
     {"name": "literal", "symbols": [(customLexer.has("regex") ? {type: "regex"} : regex)], "postprocess": id},
-    {"name": "seqLiteral", "symbols": ["optionalTag", {"literal":"{"}, "_", "expressionList", "_", {"literal":"}"}], "postprocess": 
+    {"name": "iterable", "symbols": ["emptyCollectionLiteral"], "postprocess": id},
+    {"name": "iterable", "symbols": ["seqLiteral"], "postprocess": id},
+    {"name": "iterable", "symbols": ["dictLiteral"], "postprocess": id},
+    {"name": "spreadOperator", "symbols": ["iterable", "_", {"literal":"..."}], "postprocess": 
         (data) => {
-            const tag = data[0] || "array";
-            if (tag === "dict")
-            throw new Error("Tagged sequence as dict");
+            const iterable = data[0];
+            if (!Array.isArray(iterable)) 
+            throw new Error(`cannot convert ${typeof iterable} to iterable`)
         
             return {
-                type: tag + "Literal",
-                items: data[3]
+                type: "spreadOperator",
+                iterable: data[0]
             }
         }
                 },
-    {"name": "emptyCollectionLiteral", "symbols": ["optionalTag", {"literal":"{"}, "_", {"literal":"}"}], "postprocess": 
+    {"name": "spreadOperator", "symbols": ["functionCall", "_", {"literal":"..."}], "postprocess": 
         (data) => {
-            const tag = data[0] || "array";
+            const iterable = data[0];
+            if (!Array.isArray(iterable)) 
+            throw new Error(`cannot convert ${typeof iterable} to iterable`)
+        
+            return {
+                type: "spreadOperator",
+                iterable: data[0]
+            }
+        }
+                },
+    {"name": "seqLiteral", "symbols": [{"literal":"{"}, "_", "expressionList", "_", {"literal":"}"}, "_", "optionalTag"], "postprocess": 
+        (data) => {
+            const tag = data[6] || "array";
+            if (tag === "dict")
+            throw new Error("cannot convert sequence to dict");
+        
+            return {
+                type: `${tag}Literal`,
+                items: data[2]
+            }
+        }
+                },
+    {"name": "emptyCollectionLiteral", "symbols": [{"literal":"{"}, "_", {"literal":"}"}, "_", "optionalTag"], "postprocess": 
+        (data) => {
+            const tag = data[4] || "array";
             if (tag === "dict") return {
                 type: "dictLiteral",
                 entries: []
@@ -125,31 +180,31 @@ var grammar = {
             }
         }
                 },
-    {"name": "dictLiteral", "symbols": ["optionalTag", {"literal":"{"}, "_", "kvPairList", "_", {"literal":"}"}], "postprocess": 
+    {"name": "dictLiteral", "symbols": [{"literal":"{"}, "_", "kvPairList", "_", {"literal":"}"}, "_", "optionalTag"], "postprocess": 
         (data) => {
-            const tag = data[0] || "dict";
+            const tag = data[6] || "dict";
             if (tag !== "dict")
             throw new Error(`Tagged dict as ${tag}`);
         
             return {
                 type: "dictLiteral",
-                entries: data[3]
+                entries: data[2]
             };
         }
                 },
     {"name": "kvPairList", "symbols": ["kvPair"], "postprocess": 
         (data) => [data[0]]
                 },
-    {"name": "kvPairList", "symbols": ["kvPair", "__", "kvPairList"], "postprocess": 
-        (data) => [data[0], ...data[2]]
+    {"name": "kvPairList", "symbols": ["kvPair", "_", {"literal":","}, "_", "kvPairList"], "postprocess": 
+        (data) => [data[0], ...data[4]]
                 },
     {"name": "kvPair", "symbols": ["expression", "_", {"literal":":"}, "_", "expression"], "postprocess": 
         (data) => [data[0], data[4]]
                 },
     {"name": "optionalTag", "symbols": [], "postprocess": () => null},
     {"name": "optionalTag", "symbols": ["tag"], "postprocess": id},
-    {"name": "tag", "symbols": [{"literal":"{"}, "tagName", {"literal":"}"}], "postprocess": 
-        (data) => data[1].value
+    {"name": "tag", "symbols": [{"literal":"as"}, "_", "tagName"], "postprocess": 
+        (data) => data[2].value
             },
     {"name": "tagName", "symbols": [{"literal":"array"}], "postprocess": id},
     {"name": "tagName", "symbols": [{"literal":"dict"}], "postprocess": id},

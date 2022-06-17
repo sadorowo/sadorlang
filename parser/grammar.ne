@@ -30,9 +30,12 @@ statements
 
 statement
     -> returnStatement     {% id %}
+    |  boundFunctionDefinition {% id %}
+    |  spreadOperator      {% id %}
     |  assignment          {% id %}
     |  constAssignment     {% id %}
     |  overwriteAssignment {% id %}
+    |  asyncFunctionCall   {% id %}
     |  functionCall        {% id %}
     |  functionDefinition  {% id %}
     |  ifStatement         {% id %}
@@ -74,6 +77,15 @@ returnStatement -> "return" _ expression
         })
     %}
 
+asyncFunctionCall -> "await" _ %identifier _ "(" _ expressionList _ ")"
+    {%
+        (data) => ({
+            type: "asyncFunctionCall",
+            functionName: data[2],
+            parameters: data[6]
+        })
+    %}
+
 functionCall -> %identifier _ "(" _ expressionList _ ")"
     {%
         (data) => ({
@@ -94,6 +106,17 @@ functionDefinition ->
         })
     %}
     
+boundFunctionDefinition ->
+    "bound" _ "method" _ %identifier _ "(" _ expressionList _ ")" _ functionCall
+    {%
+        (data) => ({
+            type: "boundFunctionDefinition",
+            boundFunctionName: data[4],
+            boundFunctionParameters: data[8],
+            targetFunction: data[12]
+        })
+    %}
+
 codeBlock
     -> codeBlockWParameters     {% id %}
     |  "{" _ codeBlockParameters _ "\n" statements "\n" _ "}"
@@ -115,7 +138,7 @@ codeBlockWParameters
         %}
 
 codeBlockParameters
-    -> "|" _ expressionList _ "|" _ "->"
+    -> "|" _ expressionList _ "|" _ %arrow
         {%
             (data) => data[2]
         %}
@@ -125,16 +148,18 @@ expressionList
         {%
             (data) => [data[0]]
         %}
-    |  expression "," expressionList
+    |  expression "," _ expressionList
         {%
-            (data) => [data[0], ...data[2]]
+            (data) => [data[0], ...data[3]]
         %}
+    | _ {% (data) => [] %}
 
 expression
-    -> %identifier   {% id %}
-    |  literal       {% id %}
-    |  functionCall  {% id %}
-    |  codeBlock     {% id %}
+    -> %identifier       {% id %}
+    |  literal           {% id %}
+    |  asyncFunctionCall {% id %}
+    |  functionCall      {% id %}
+    |  codeBlock         {% id %}
 
 literal
     -> %number                  {% id %}
@@ -144,26 +169,59 @@ literal
     |  dictLiteral              {% id %}
     |  %regex                   {% id %}
 
-seqLiteral
-    -> "{" _ expressionList _ "}" optionalTag
+iterable
+    -> emptyCollectionLiteral {% id %}
+    |  seqLiteral {% id %}
+    |  dictLiteral {% id %}
+
+spreadOperator 
+    -> iterable _ "..."
         {%
             (data) => {
-                const tag = data[0] || "array";
+                const iterable = data[0];
+                if (!Array.isArray(iterable)) 
+                throw new Error(`cannot convert ${typeof iterable} to iterable`)
+
+                return {
+                    type: "spreadOperator",
+                    iterable: data[0]
+                }
+            }
+        %}
+    | functionCall _ "..."
+        {%
+            (data) => {
+                const iterable = data[0];
+                if (!Array.isArray(iterable)) 
+                throw new Error(`cannot convert ${typeof iterable} to iterable`)
+
+                return {
+                    type: "spreadOperator",
+                    iterable: data[0]
+                }
+            }
+        %}
+
+seqLiteral
+    -> "{" _ expressionList _ "}" _ optionalTag
+        {%
+            (data) => {
+                const tag = data[6] || "array";
                 if (tag === "dict")
                 throw new Error("cannot convert sequence to dict");
 
                 return {
                     type: `${tag}Literal`,
-                    items: data[3]
+                    items: data[2]
                 }
             }
         %}
 
 emptyCollectionLiteral
-    -> "{" _ "}" optionalTag
+    -> "{" _ "}" _ optionalTag
         {%
             (data) => {
-                const tag = data[0] || "array";
+                const tag = data[4] || "array";
                 if (tag === "dict") return {
                     type: "dictLiteral",
                     entries: []
@@ -175,16 +233,16 @@ emptyCollectionLiteral
         %}
 
 dictLiteral
-    -> "{" _ kvPairList _ "}" optionalTag
+    -> "{" _ kvPairList _ "}" _ optionalTag
         {%
             (data) => {
-                const tag = data[0] || "dict";
+                const tag = data[6] || "dict";
                 if (tag !== "dict")
                 throw new Error(`Tagged dict as ${tag}`);
 
                 return {
                     type: "dictLiteral",
-                    entries: data[3]
+                    entries: data[2]
                 };
             }
         %}
@@ -194,9 +252,9 @@ kvPairList
         {%
             (data) => [data[0]]
         %}
-    |  kvPair __ kvPairList
+    |  kvPair _ "," _ kvPairList
         {%
-            (data) => [data[0], ...data[2]]
+            (data) => [data[0], ...data[4]]
         %}
 
 kvPair

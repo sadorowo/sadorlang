@@ -4,7 +4,7 @@
   "description": "SadorLang files",
   "scripts": {
     "test": "echo \"OK\"",
-    "parse": "nearleyc .\\parser\\grammar.ne -o .\\parser\\grammar.js"
+    "parse": "nearleyc ./parser/grammar.ne -o ./parser/grammar.js"
   },
   "keywords": [],
   "author": "Sador",

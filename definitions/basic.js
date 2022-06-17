@@ -3,7 +3,10 @@ const { runtime, generate } = require('../ui/generator');
 module.exports = function (node) {
     switch (node.type) {
         case 'compiled': 
-        return node.body.map(generate).join(';\n') + ';\n' + runtime;
+        return `(async function () {
+            ${node.body.map(generate).join(';\n')};
+            ${runtime}
+        })()`;
 
         case 'constAssignment': {
             const varName = node.variableName.value;
@@ -36,6 +39,22 @@ module.exports = function (node) {
 		    const params = node.parameters.map(generate).join(', ');
 
 		    return `${functionName}(${params})`;
+        }
+
+        case 'spreadOperator': {
+            const sourceFunctionName = node.functionName.value;
+	    	const functionName = sourceFunctionName === 'if' ? '_if' : sourceFunctionName;
+		    const params = node.parameters.map(generate).join(', ');
+
+		    return `${functionName}(${params})`;
+        }
+
+        case 'asyncFunctionCall': {
+            const sourceFunctionName = node.functionName.value;
+	    	const functionName = sourceFunctionName === 'if' ? '_if' : sourceFunctionName;
+		    const params = node.parameters.map(generate).join(', ');
+
+		    return `await ${functionName}(${params})`;
         }
 
         case 'identifier': 

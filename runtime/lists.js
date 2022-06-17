@@ -31,7 +31,7 @@ function entries(map) {
 }
 
 function concat(...arrays) {
-    return new Array().concat(...arrays)
+    return [].concat(...arrays)
 }
 
 function incl(array, item) {

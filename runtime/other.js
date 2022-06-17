@@ -19,6 +19,10 @@ function repl(str, from, to) {
     return str.replaceAll(from, to)
 }
 
+function split(str, splitter) {
+    return str.split(splitter)
+}
+
 function replAll(str, kvp) {
     Array.from(kvp.entries()).forEach(([k, v]) => { str = str.replaceAll(k, v) })
     return str
@@ -29,7 +33,7 @@ function fmt(str, ...variables) {
         str = str.replace(`$${index}`, variables[index])
     }
 
-    return str
+    return String(str)
 }
 
 function printf(str, ...variables) {
